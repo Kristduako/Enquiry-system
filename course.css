@@ -24,7 +24,7 @@
     border-radius:13px;
     width:320px;
     height: 100vh;
-    background:linear-gradient(to right, white,deepskyblue);
+    background:linear-gradient(to right, white,rgb(27, 12, 36));
     position: fixed;
     top: 0;
     left:0;
@@ -45,7 +45,7 @@
 }
 .solid:hover{
     background-color:white;
-    color:steelblue;
+    color:rgb(38, 16, 55);
 
 }
 .input{

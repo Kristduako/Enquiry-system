@@ -19,8 +19,7 @@
 }
 .solid:hover{
 	background-color:white;
-	color:indianred;
-
+	color:rgb(23, 15, 48);
 }
 
 .btn{
@@ -49,7 +48,7 @@
 	border-radius:13px;
 	width:320px;
 	height: 100vh;
-	background:linear-gradient(to right, white,indianred);
+	background:linear-gradient(to right, white,rgb(28, 14, 39));
 	position: fixed;
 	top: 0;
 	left:0;
