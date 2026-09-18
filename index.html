@@ -21,32 +21,22 @@
         <nav class="nav1">
             <h1 class="h1">Enquiry Table</h1>
 		  <table class="table">
-			<tr >
-                <th class="table1">
-                    ID
+			<tr  >
+                <th class="table1" >
+                    Name
                 </th>
-
-                <th class="table1">
-                    Surname
-                </th>
-                <th class="table1">
-                	First Name
-                </th>
-                <th class="table1">
+                <th class="table1" >
                 	Course
                 </th>
-                <th class="table1">
+                <th class="table1" >
                 	Date
                 </th>
-                <th  class="table1">
+                <th  class="table1" >
                 	Status
 
                 </th>
-                <th class="table1">
+                <th class="table1" >
                 	Contact
-                </th>
-                <th class="table1">
-                	Course ID
                 </th>
                 <th class="table1">
                     
@@ -56,77 +46,61 @@
                 </th>
 
             </tr>
-            <tr>
-            	
-            	<td class="table2">
-            		001
+            <tr id="record-1">
+            	<td class="table2" id="name-1">
+            		Amo Felix
             	</td>
-            	<td class="table2">
-            		Amo
-            	</td>
-            	<td class="table2">
-            		Felix
-            	</td>
-            	<td class="table2">
+            	<td class="table2" id="course-1">
             		MS.WORD
             	</td>
-            	<td class="table2">
+            	<td class="table2" id="date-1">
             		20/03/2024
             	</td>
-            	<td class="table2">
+            	<td class="table2" id="status-1">
             		Active
             	</td>
-            	<td class="table2">
+            	<td class="table2" id="Contact-1">
             		054559909
             	</td>
-            	<td class="table2">
-            		BTC 2099
-            	</td>
                 <td class="table1">
-                    <button onclick="editRecords()" class="edit">✍🏼</button>
+                    <button onclick="editRecords(1)" class="edit">✍🏼</button>
                 </td class>
                 <td class="table1">
-                    <button onclick="editRecords()" class="Delete">🗑️</button>
+                    <button onclick="deleteRecords(1)" class="Delete">🗑️</button>
                 </td>
    
             	
             	
             </tr>
-             <tr>
+             <tr id="record-2">
             	
-            	<td class="table2">
-            		001
+            	<td class="table2" id="name-2">
+            		Baah EDINACE
             	</td>
-            	<td class="table2">
-            		Amo
-            	</td>
-            	<td class="table2">
-            		Felix
-            	</td>
-            	<td class="table2">
+            
+            	<td class="table2" id="course-2">
             		MS.WORD
             	</td>
-            	<td class="table2">
+            	<td class="table2"id="date-2">
             		20/03/2024
             	</td>
-            	<td class="table2">
+            	<td class="table2"id="status-2">
             		Active
             	</td>
-            	<td class="table2">
+            	<td class="table2"id="Contact-2">
             		054559909
-            	</td>
-            	<td class="table2">
-            		BTC 2099
             	</td>
                     
                <td class="table1">
-                    <button onclick="editRecords()" class="edit">✍🏼</button>
+                    <button onclick="editRecords(2)" class="edit">✍🏼</button>
                 </td class>
                 <td class="table1">
-                    <button onclick="editRecords()" class="Delete">🗑️</button>
+                    <button onclick="deleteRecords(2)" class="Delete">🗑️</button>
                 </td>
             </tr>
 		</table><br></nav>
+				
+		<script src="script.js"></script>
             
 	</body>
 </html>
