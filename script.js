@@ -1,49 +1,49 @@
 //======EDIT=======//
 
 function editRecords(id) {
-
     let name = document.getElementById("name-"+id).innerText;
-
-    let Course = document.getElementById("course-"+id).innerText;
-
+    let course = document.getElementById("course-"+id).innerText;
     let date = document.getElementById("date-"+id).innerText;
+    let status = document.getElementById("status-"+id).innerText;
+    let contact = document.getElementById("Contact-"+id).innerText;
 
-    let Status = document.getElementById("status-"+id).innerText;
 
-    let Contact = document.getElementById("Contact-"+id).innerText;
+    document.getElementById("name").value = name;
+    document.getElementById("course").value = course;
+    document.getElementById("date").value = date;
+    document.getElementById("status").value = status;
+    document.getElementById("Contact").value = contact;
 
-    window.location.href = "New Enquiry.html?id=" + id + 
-     "&name="+ 
-    encodeURIComponent(name) + 
-    "&course="+ 
-    encodeURIComponent(Course)+
-    "&date="+ 
-    encodeURIComponent(date) +
-    "&status=" + 
-    encodeURIComponent(Status) +
-    "&contact=" + 
-    encodeURIComponent(Contact) ;   
+    document.getElementById("enquiryModal").style.display="block";
+     
 }
 
 //==========DELETE=========//
+let deleteId = null;
+
 function deleteRecords(id){
-    let answer = confirm("Are you Sure Want to delete this Records?");
-    
-    if(!answer){
+    deleteId = id;
 
-        return;
-    }
+    document.getElementById("deleteModal").style.display = "flex";
+}
 
-    let row = document.getElementById("record-"+ id);
+function confirmDelete(){
+    let row = document.getElementById("record-" + deleteId);
 
     if(row){
-
         row.remove();
+        alert("Data deleted successfully");
     }
 
-    alert("Data deleted  successfully");
-
+    document.getElementById("deleteModal").style.display = "none";
+    deleteId = null;
 }
+
+function closeDeleteModal(){
+    document.getElementById("deleteModal").style.display = "none";
+    deleteId = null;
+}
+
 
 function loadEditData(){
     let params= new URLSearchParams(window.location.search);
@@ -77,4 +77,25 @@ document.addEventListener(
         loadEditData();
     }
 )
+
+// + new Enquiry//
+function openEnquiryModal(){
+    document.getElementById("name").value = "";
+    document.getElementById("course").value = "";
+    document.getElementById("date").value = "";
+    document.getElementById("status").value = "";
+    document.getElementById("Contact").value = "";
+
+    document.getElementById("enquiryModal").style.display ="block";
+
+}
+function closeEnquiryModal(){
+    document.getElementById("enquiryModal").style.display="none";
+
+}
+function saveEnquiry(){
+    alert("Enquiry Saved");
+    closeEnquiryModal();
+}
+
 

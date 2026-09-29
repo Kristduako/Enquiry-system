@@ -96,3 +96,21 @@
     background: #0284c7;
     color: white;
 }
+a.log{
+    display: inline-block;
+    text-decoration: none;
+    color: white;
+    background-color: #df0e1f;
+    padding: 10px 10px;
+    border-radius: 6px;
+    font-size: 15px;
+    font-weight: bold;
+    position: absolute;
+    bottom: 5px;
+    left: 225px;
+    transition: background-color 0.3s ease;
+    
+}
+a.log:hover {
+    background-color: #a30f0f;
+}

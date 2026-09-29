@@ -5,23 +5,28 @@
 		<meta name="viewport" content="width=device-width, initial-scale=1">
 		<title>Enquir Dashboard🖥</title>
 		<link rel="stylesheet" type="text/css" href="style.css">
+	
 	</head>
 	<body style="margin: 0;">
-        <div class="sidenav">
-            <input type="Search" placeholder="Search Enquires 🔍" name="Search" class="input"><button type="submit" class="btn">Search</button><br><br></h1><br>
-			<a href="Login.html" >Login 👥</a>
-            <a href="New Enquiry.html" >➕Add new Enquiry</a>
-            <a href="stat.html" >Stat Dashboard🖥</a>
-            <a href="course.html" >Course Table</a>
-        </div>
+		<div>
+			<div class="sidenav">
+				<input type="Search" placeholder="Search Enquires 🔍" name="Search" class="input"><button type="submit" class="btn">Search</button><br><br></h1><br>
+				<a href="stat.html" >Stat Dashboard🖥</a>
+				<a href="index.html" >Enquiries</a>
+				<a href="course.html" >Courses</a>
+				
+			</div>
 
+			<a href="Login.html" class="log">Logout</a>
+		</div>
+		
         <nav>
 		      <h1 class="new1">Enquiries System View🖥<img src="gi kace.jpeg" class="img"><br>
         </nav><br>
-        <nav class="nav1">
+        <div class="nav1">
             <h1 class="h1">Enquiry Table</h1>
 		  <table class="table">
-			<tr  >
+			<tr id="record-1"  >
                 <th class="table1" >
                     Name
                 </th>
@@ -44,35 +49,36 @@
                 <th class="table1">
                     
                 </th>
-
-            </tr>
-            <tr id="record-1">
-            	<td class="table2" id="name-1">
-            		Amo Felix
-            	</td>
-            	<td class="table2" id="course-1">
-            		MS.WORD
-            	</td>
-            	<td class="table2" id="date-1">
-            		20/03/2024
-            	</td>
-            	<td class="table2" id="status-1">
-            		Active
-            	</td>
-            	<td class="table2" id="Contact-1">
-            		054559909
-            	</td>
-                <td class="table1">
-                    <button onclick="editRecords(1)" class="edit">✍🏼</button>
-                </td class>
-                <td class="table1">
-                    <button onclick="deleteRecords(1)" class="Delete">🗑️</button>
-                </td>
-   
-            	
-            	
+				<button type="button" class="ahref" onclick="openEnquiryModal()">➕ New Enquiry</button>
             </tr>
              <tr id="record-2">
+            	
+            	<td class="table2" id="name-2">
+            		Sakyi Salisu
+            	</td>
+            
+            	<td class="table2" id="course-2">
+            		A.I Learning
+            	</td>
+            	<td class="table2"id="date-2">
+            		20/03/2024
+            	</td>
+            	<td class="table2"id="status-2">
+            		Active
+            	</td>
+            	<td class="table2"id="Contact-2">
+            		0545589767
+            	</td>
+                    
+               <td class="table1">
+                    <button onclick="editRecords(2)" class="edit">✍🏼</button>
+                </td class>
+                <td class="table1">
+                    <button onclick="deleteRecords(2, event)" class="Delete" type="button">🗑️</button>
+                </td>
+            	</tr>
+
+				<tr id="record-2">
             	
             	<td class="table2" id="name-2">
             		Baah EDINACE
@@ -95,10 +101,68 @@
                     <button onclick="editRecords(2)" class="edit">✍🏼</button>
                 </td class>
                 <td class="table1">
-                    <button onclick="deleteRecords(2)" class="Delete">🗑️</button>
+                    <button onclick="deleteRecords(2, event)" class="Delete" type="button">🗑️</button>
                 </td>
-            </tr>
-		</table><br></nav>
+            	</tr>
+				</table><br>
+
+				<div id="deleteModal" class="modal">
+				<div class="modal-box">
+				<h2>
+					Delete Records
+				</h2>
+				<P>Are you Sure you want to delete this Record?</P>
+				<div class="modal-buttons">
+					<button class="cancel-btn" onclick="closeDeleteModal()">
+						Cancel
+					</button>
+					<button class="delete-btn" onclick="confirmDelete()">
+						Delete
+					</button>
+					
+
+				</div>
+			</div>
+
+		</div>
+			<div id="enquiryModal" class="modal-overlay">
+				<div class="modal-content">
+					<h1 class="h1">ENQUIRY FORM 📚</h1><p>Create a New Enquiry Form </p>
+						<form>
+
+							<label class="lb1">Name</label><br>
+							<input type="text" name="fname" class="input2" id="name"><br>
+
+							<label class="lb1">Course📖</label><br>
+							<input type="text" name="course" class="input2" id="course"><br>
+
+							<label class="lb1">Date 📅</label><br>
+							<input type="Date" name="date" class="input2" id="date"><br>
+
+							<label class="lb1">Status🟢</label><br>
+							<input list="Status" name="Status" placeholder="Status" class="input2" id="status"><br>
+							<datalist id="Status">
+							<option value="Cancelled"></option>
+							<option value="Registered"></option>
+							<option value="Pending"></option>
+							</datalist>
+
+							<label class="lb1">Contact📞</label><br>
+							<input type="text" name="Contact" class="input2" id="Contact"><br><br>
+
+							<button type="button" onclick="saveEnquiry()" class="btn">
+								Save
+							</button>
+							<button type="button" onclick="closeEnquiryModal()" class="btn">Cancel</button>
+							
+						
+						</form>
+
+				</div>
+
+			</div>
+
+		
 				
 		<script src="script.js"></script>
             
