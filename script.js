@@ -5,13 +5,16 @@ function editRecords(id) {
     let course = document.getElementById("course-"+id).innerText;
     let date = document.getElementById("date-"+id).innerText;
     let status = document.getElementById("status-"+id).innerText;
+    let address = document.getElementById("address-"+id).innerText;
     let contact = document.getElementById("Contact-"+id).innerText;
+
 
 
     document.getElementById("name").value = name;
     document.getElementById("course").value = course;
     document.getElementById("date").value = date;
     document.getElementById("status").value = status;
+    document.getElementById("address").value = address;
     document.getElementById("Contact").value = contact;
 
     document.getElementById("enquiryModal").style.display="block";
