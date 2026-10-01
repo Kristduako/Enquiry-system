@@ -173,10 +173,20 @@ body {
 
 
 .nav1 {
-    width:60%;
+    width:100%;
 	margin-left:350px;
-}
+   
+    
 
+
+}
+.nav1 table th {
+    position: sticky;
+    top: 0;
+    background-color: grey;
+    color: white;
+    z-index: 10;
+}
 
 .h1 {
     font-weight: bolder;
@@ -206,16 +216,17 @@ a.log:hover {
 }
 
 
-
-
 .table {
+    margin-left:350px;
+    max-height: 400px;
+    overflow-y: auto;
+    overflow-x: auto;
     width: 125%;
     justify-content: flex-end;
     border-collapse: separate;
     border-spacing: 0;
     background: white;
     border-radius: 15px;
-    overflow: hidden;
     box-shadow: 0 8px 25px rgba(15, 23, 42, 0.08);
 }
 
@@ -224,11 +235,13 @@ a.log:hover {
 .table1 {
     padding: 16px 14px;
     background: #1e3a8a;
-    color: white;
+    color: rgb(245, 241, 241);
     font-size: 14px;
     font-weight: 600;
     text-align: center;
     border-bottom: 1px solid #dbeafe;
+    position: sticky;
+    top:0;
 }
 
 

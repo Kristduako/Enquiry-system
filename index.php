@@ -3,10 +3,30 @@ require_once 'db_conn.php';
 
 $sql = "SELECT * FROM enquiries";
 $result = $conn->query($sql);
+
+if(isset($_POST['save'])) {
+
+	$name = $_POST['name'];
+	$course = $_POST['course'];
+	$date = $_POST['date'];
+	$status = $_POST['status'];
+	$contact = $_POST['contact'];
+	$address = $_POST['address'];
+
+	$sql = "INSERT INTO enquiries (name,course,date,status,contact,address) 
+	VALUES('$name','$course','$date','$status','$contact','$address')";
+
+	if(mysqli_query($conn,$sql)){
+
+		header("Location:index.php?success=1");
+	}else{
+		echo"error".mysqli_error($conn);
+		exit();
+	}
+
+}
+
 ?>
-
-
-
 <!DOCTYPE html>
 <html>
 	<head>
@@ -34,6 +54,7 @@ $result = $conn->query($sql);
         </nav><br>
         <div class="nav1">
             <h1 class="h1">Enquiry Table</h1>
+			<div class=scrollable-table>
 		  <table class="table">
 			<tr id="record-1"  >
                 <th class="table1" >
@@ -64,7 +85,7 @@ $result = $conn->query($sql);
 				<button type="button" class="ahref" onclick="openEnquiryModal()">➕ New Enquiry</button>
             </tr>
 
-			/*php part */
+			
 			<?php
 			if($result->num_rows > 0){
 				while($row = $result-> fetch_assoc()){
@@ -111,14 +132,16 @@ $result = $conn->query($sql);
 			}
 			?>
 			</table>
-		</div>
+			</div>
+			</div>
 		
 			<div id="enquiryModal" class="modal-overlay">
 				<div class="modal-content">
 					<h1 class="h1">ENQUIRY FORM 📚</h1><p>Create a New Enquiry Form </p>
-						<form>
+						
+					<form method ="POST" action="index.php">
 							<label class="lb1">Name</label><br>
-							<input type="text" name="fname" class="input2" id="name"><br>
+							<input type="text" name="name" class="input2" id="name"><br>
 
 							<label class="lb1">Course📖</label><br>
 							<input type="text" name="course" class="input2" id="course"><br>
@@ -127,7 +150,7 @@ $result = $conn->query($sql);
 							<input type="Date" name="date" class="input2" id="date"><br>
 
 							<label class="lb1">Status🟢</label><br>
-							<input list="Status" name="Status" placeholder="Status" class="input2" id="status"><br>
+							<input list="Status" name="status" placeholder="Status" class="input2" id="status"><br>
 							<datalist id="Status">
 							<option value="Cancelled"></option>
 							<option value="Registered"></option>
@@ -139,8 +162,9 @@ $result = $conn->query($sql);
 							</label>
 		
 							<label class="lb1">Contact📞</label><br>
-							<input type="text" name="Contact" class="input2" id="Contact"><br><br>
-							<button type="button" onclick="saveEnquiry()" class="btn">
+							<input type="text" name="contact" class="input2" id="Contact"><br><br>
+							
+							<button type="submit" name="save"  value = "1" class="btn">
 								Save
 							</button>
 							<button type="button" onclick="closeEnquiryModal()" class="btn">Cancel</button>

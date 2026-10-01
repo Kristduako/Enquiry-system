@@ -96,9 +96,3 @@ function closeEnquiryModal(){
     document.getElementById("enquiryModal").style.display="none";
 
 }
-function saveEnquiry(){
-    alert("Enquiry Saved");
-    closeEnquiryModal();
-}
-
-
