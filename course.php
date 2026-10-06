@@ -1,3 +1,19 @@
+<?php
+require_once 'db_conn.php';
+
+$sql = "SELECT course_name,duration,cost,no_enquiries FROM enquiry_details_view";
+$result = $conn->query($sql);
+
+    if(!$result){
+        die("SQL Query failed:".$conn->error);
+    }
+
+
+?>
+
+
+
+
 <!DOCTYPE html>
 <html>
 <head>
@@ -14,8 +30,8 @@
 			<div class="sidenav">
 				<input type="Search" placeholder="Search Enquires 🔍" name="Search" class="input"><button type="submit" class="btn">Search</button><br><br></h1><br>
 				<a href="stat.html" >Stat Dashboard🖥</a>
-				<a href="index.html" >Enquiries</a>
-				<a href="course.html" >Courses</a>
+				<a href="index.php" >Enquiries</a>
+				<a href="course.php" >Courses</a>
 				
 			</div>
 
@@ -26,21 +42,27 @@
             <table class="table">
                 <th class="table1">Course Name</th>
                 <th class="table1">Duration</th>
-                <th class="table1">Status</th>
+                <th class="table1">Cost</th>
                 <th class="table1">Number of enquiries</th>
 
+                <?php
+                if($result && $result->num_rows > 0)
+                    {
+                        while($row = $result-> fetch_assoc()){
+                ?>
                 <tr>
-                <td class="table2">MS Application</td>
-                <td class="table2">2 months</td>
-                <td class="table2">Active</td>
-                <td class="table2">25</td>
+                <td class="table2"><?php echo htmlspecialchars($row["course_name"]); ?></td>
+                <td class="table2"><?php echo htmlspecialchars($row["duration"]); ?></td>
+                <td class="table2"><?php echo htmlspecialchars($row["cost"]); ?></td>
+                <td class="table2"><?php echo htmlspecialchars($row["no_enquiries"]); ?></td>
                 </tr>
-                <tr class="table2">
-                <td class="table2">Software Development</td>
-                <td class="table2">3 months</td>
-                <td class="table2">Pending</td>
-                <td class="table2">15</td>
-                </tr>
+                <?php
+                        }
+                    }else{
+                        echo"<tr><td colspan = '4' class='table2'>No courses Found</td></tr>";
+                
+                        }
+                ?>
             </table>
         </nav><br>
 

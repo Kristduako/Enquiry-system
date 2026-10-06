@@ -6,7 +6,7 @@ function editRecords(id) {
     let date = document.getElementById("date-"+id).innerText;
     let status = document.getElementById("status-"+id).innerText;
     let address = document.getElementById("address-"+id).innerText;
-    let contact = document.getElementById("Contact-"+id).innerText;
+    let contact = document.getElementById("contact-"+id).innerText;
 
 
 
@@ -15,36 +15,28 @@ function editRecords(id) {
     document.getElementById("date").value = date;
     document.getElementById("status").value = status;
     document.getElementById("address").value = address;
-    document.getElementById("Contact").value = contact;
+    document.getElementById("contact").value = contact;
 
+    document.getElementById("edit_enquiry_id").value = id;
+    let submitBtn = document.getElementById("submitBtn");
+    submitBtn.name = "update_btn";
+    submitBtn.innerText = "update";
     document.getElementById("enquiryModal").style.display="block";
      
 }
 
 //==========DELETE=========//
-let deleteId = null;
+
 
 function deleteRecords(id){
-    deleteId = id;
+    document.getElementById("modal_enquiry_id").value = id;
 
     document.getElementById("deleteModal").style.display = "flex";
 }
 
-function confirmDelete(){
-    let row = document.getElementById("record-" + deleteId);
-
-    if(row){
-        row.remove();
-        alert("Data deleted successfully");
-    }
-
-    document.getElementById("deleteModal").style.display = "none";
-    deleteId = null;
-}
-
 function closeDeleteModal(){
     document.getElementById("deleteModal").style.display = "none";
-    deleteId = null;
+    document.getElementById("modal_enquiry_id").value = "";
 }
 
 
@@ -73,13 +65,7 @@ function loadEditData(){
 
 
 }
-document.addEventListener(
-    "DOMContentLoaded",
-    function(){
 
-        loadEditData();
-    }
-)
 
 // + new Enquiry//
 function openEnquiryModal(){
@@ -87,8 +73,13 @@ function openEnquiryModal(){
     document.getElementById("course").value = "";
     document.getElementById("date").value = "";
     document.getElementById("status").value = "";
-    document.getElementById("Contact").value = "";
+    document.getElementById("address").value = "";
+    document.getElementById("contact").value = "";
 
+    document.getElementById("edit_enquiry_id").value = "";
+    let submitBtn = document.getElementById("submitBtn");
+    submitBtn.name = "save";
+    submitBtn.innerText = "Save";
     document.getElementById("enquiryModal").style.display ="block";
 
 }
@@ -96,3 +87,4 @@ function closeEnquiryModal(){
     document.getElementById("enquiryModal").style.display="none";
 
 }
+

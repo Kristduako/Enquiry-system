@@ -23,7 +23,51 @@ if(isset($_POST['save'])) {
 		echo"error".mysqli_error($conn);
 		exit();
 	}
+}
 
+	if(isset($_POST['confirm_Delete'])){
+		$enquiry_id = $_POST['enquiry_id'];
+		$delete_sql = "DELETE FROM enquiries WHERE enquiry_id = '$enquiry_id' ";
+
+		if(mysqli_query($conn,$delete_sql)){
+			header("Location: index.php?deleted=1");
+			exit();
+
+		}else{
+			echo"Error deleting record:".mysqli_error($conn);
+			exit();
+		}
+
+	}
+
+if(isset($_POST['update_btn'])){
+	$enquiry_id = $_POST['enquiry_id'];
+	$name = $_POST['name'];
+	$course = $_POST['course'];
+	$date = $_POST['date'];
+	$status = $_POST['status'];
+	$address = $_POST['address'];
+	$contact = $_POST['contact'];
+	
+
+	$update_sql = "UPDATE enquiries SET
+	 `name` ='$name',
+	 `course` ='$course',
+	 `date`= '$date',
+	 `status` = '$status',
+	 `address`='$address',
+	 `contact` ='$contact'
+	 
+	 WHERE `enquiry_id`='$enquiry_id'";
+	 
+		if(mysqli_query($conn,$update_sql)){
+			header("Location: index.php?updated=1");
+			exit();
+
+		}else{
+			echo"Error updating record:".mysqli_error($conn);
+			exit();
+		}
 }
 
 ?>
@@ -41,8 +85,8 @@ if(isset($_POST['save'])) {
 			<div class="sidenav">
 				<input type="Search" placeholder="Search Enquires 🔍" name="Search" class="input"><button type="submit" class="btn">Search</button><br><br></h1><br>
 				<a href="stat.html" >Stat Dashboard🖥</a>
-				<a href="index.html" >Enquiries</a>
-				<a href="course.html" >Courses</a>
+				<a href="index.php" >Enquiries</a>
+				<a href="course.php" >Courses</a>
 				
 			</div>
 
@@ -54,7 +98,7 @@ if(isset($_POST['save'])) {
         </nav><br>
         <div class="nav1">
             <h1 class="h1">Enquiry Table</h1>
-			<div class=scrollable-table>
+			<div >
 		  <table class="table">
 			<tr id="record-1"  >
                 <th class="table1" >
@@ -91,7 +135,7 @@ if(isset($_POST['save'])) {
 				while($row = $result-> fetch_assoc()){
 
 				    echo "<tr id='row-".$row['enquiry_id']."'>";
-				    echo "<td class='table2' id='name- ". 
+				    echo "<td class='table2' id='name-". 
 					$row['enquiry_id']."'>"
 					.htmlspecialchars($row['name'])."</td>";
 					echo "<td class='table2' id='course-". 
@@ -111,18 +155,15 @@ if(isset($_POST['save'])) {
 					.htmlspecialchars($row['address'])."</td>";
 
 					
-					echo "<td class='table1'>";
+					echo "<td class='table2'>";
 					echo "<button
 					onclick='editRecords(" .
-					$row['enquiry_id'] . ")'
-					class='edit'>✍🏼</button>";
+					$row['enquiry_id'] . ")'class='edit'>✍🏼</button>";
 					echo"</td>";
 
-					echo "<td class='table1'>";
+					echo "<td class='table2'>";
 					echo "<button
-					onclick='deleteRecords(" .
-					$row['enquiry_id'] . ")'
-					class='Delete'>🗑️</button>";
+					onclick='deleteRecords(". $row['enquiry_id'].")' class='Delete'>🗑️</button>";
 					echo"</td>";
 					
 				}
@@ -134,17 +175,28 @@ if(isset($_POST['save'])) {
 			</table>
 			</div>
 			</div>
-		
+			//add new enquiry//
+
 			<div id="enquiryModal" class="modal-overlay">
 				<div class="modal-content">
 					<h1 class="h1">ENQUIRY FORM 📚</h1><p>Create a New Enquiry Form </p>
 						
-					<form method ="POST" action="index.php">
+					<form method ="POST" action="index.php" >
+						<input type = "hidden" name="enquiry_id" id="edit_enquiry_id">
 							<label class="lb1">Name</label><br>
 							<input type="text" name="name" class="input2" id="name"><br>
-
-							<label class="lb1">Course📖</label><br>
-							<input type="text" name="course" class="input2" id="course"><br>
+							
+							<label class="lb1">Course</label><br>
+							<SELECT Name="course" class="input2" id="course">
+								<option value="">Selecct Course</option>
+								<option value="OPS">OPS</option>
+								<option value="CISA(weekdays)">CISA(weekdays)</option>
+								<option value="CISA(weekdends)">CISA(weekdends)</option>
+								<option value="CCNA(weekdays)">CCNA(weekdays)</option>
+								<option value="CCNA(weekends)">CCNA(weekends)</option>
+								<option value="CSD">CSD</option>
+								<option value="Cyber security">Cyber security</option>
+							</SELECT><br>
 
 							<label class="lb1">Date 📅</label><br>
 							<input type="Date" name="date" class="input2" id="date"><br>
@@ -162,9 +214,9 @@ if(isset($_POST['save'])) {
 							</label>
 		
 							<label class="lb1">Contact📞</label><br>
-							<input type="text" name="contact" class="input2" id="Contact"><br><br>
+							<input type="text" name="contact" class="input2" id="contact"><br><br>
 							
-							<button type="submit" name="save"  value = "1" class="btn">
+							<button type="submit" name="save" id="submitBtn"  value = "1" class="btn">
 								Save
 							</button>
 							<button type="button" onclick="closeEnquiryModal()" class="btn">Cancel</button>
@@ -173,6 +225,34 @@ if(isset($_POST['save'])) {
 				</div>
 
 			</div>
+			```html
+						<!-- Delete Confirmation Popup -->
+						<div id="deleteModal" class="modal">
+							<div class="modal-box">
+							
+
+								<h2>Delete Enquiry</h2>
+
+								<p>Are you sure you want to delete this enquiry?</p>
+								<form method="POST" action="index.php">
+									<input type="hidden" name="enquiry_id" id="modal_enquiry_id" value="">  
+
+								
+
+								<div class="modal-buttons">
+									<button type="button" class="cancel-btn" onclick="closeDeleteModal()">
+										Cancel
+									</button>
+
+									<button type="submit" class="delete-btn" name="confirm_Delete">
+										Delete
+									</button>
+								</div>
+							</form>
+
+							</div>
+						</div>
+						```
 
 		
 				
