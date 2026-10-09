@@ -1,19 +1,17 @@
 //======EDIT=======//
 
 function editRecords(id) {
-    let name = document.getElementById("name-"+id).innerText;
-    let course = document.getElementById("course-"+id).innerText;
-    let date = document.getElementById("date-"+id).innerText;
-    let status = document.getElementById("status-"+id).innerText;
-    let address = document.getElementById("address-"+id).innerText;
-    let contact = document.getElementById("contact-"+id).innerText;
+    let name = document.getElementById("name-"+ id).innerText;
+    let course = document.getElementById("course-"+ id).innerText;
+    let date = document.getElementById("date-"+ id).innerText;
+    let address = document.getElementById("address-"+ id).innerText;
+    let contact = document.getElementById("contact-"+ id).innerText;
 
 
 
     document.getElementById("name").value = name;
     document.getElementById("course").value = course;
     document.getElementById("date").value = date;
-    document.getElementById("status").value = status;
     document.getElementById("address").value = address;
     document.getElementById("contact").value = contact;
 
@@ -46,7 +44,6 @@ function loadEditData(){
     let name = params.get("name");
     let course = params.get("course");
     let date = params.get("date");
-    let status = params.get("status");
     let Contact = params.get("contact");
 
     if(!name){
@@ -58,8 +55,6 @@ function loadEditData(){
     document.getElementById("course").value = course;
     
     document.getElementById("date").value = date;
-    
-    document.getElementById("status").value = status;
 
     document.getElementById("Contact").value = Contact;
 
@@ -72,7 +67,6 @@ function openEnquiryModal(){
     document.getElementById("name").value = "";
     document.getElementById("course").value = "";
     document.getElementById("date").value = "";
-    document.getElementById("status").value = "";
     document.getElementById("address").value = "";
     document.getElementById("contact").value = "";
 
@@ -88,3 +82,47 @@ function closeEnquiryModal(){
 
 }
 
+// + new course//
+function opencourse_EnquiryModal(){
+    document.getElementById("course_name").value = "";
+    document.getElementById("duration").value = "";
+    document.getElementById("cost").value = "";
+    
+    document.getElementById("course_enquirymodal").style.display ="flex";
+
+}
+
+function closecourse_EnquiryModal(){
+    document.getElementById("course_enquirymodal").style.display="none";
+ 
+}
+
+
+//Delete pop up//
+
+function deletecourse(id){
+    document.getElementById("course_id").value = id;
+    document.getElementById("deletecourse").style.display = "flex";
+}
+
+function closedeletecourse(){
+    document.getElementById("deletecourse").style.display = "none";
+    document.getElementById("course_id").value = "id";
+}
+
+//Edit course//
+function editcourse(id) {
+    let name = document.getElementById("course_name-"+ id).innerText;
+    let course = document.getElementById("duration-"+ id).innerText;
+    let date = document.getElementById("cost-"+ id).innerText;
+    
+    document.getElementById("course_name").value = name;
+    document.getElementById("duration").value = course;
+    document.getElementById("cost").value = date;
+
+    document.getElementById("edit_course_id").value = id;
+    let submitBtn = document.getElementById("submitBtn");
+    submitBtn.name = "update_btn";
+    submitBtn.innerText = "update";
+    document.getElementById("course_enquirymodal").style.display="flex";
+}
