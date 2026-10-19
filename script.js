@@ -126,3 +126,160 @@ function editcourse(id) {
     submitBtn.innerText = "update";
     document.getElementById("course_enquirymodal").style.display="flex";
 }
+
+
+
+
+// Graph //
+const dashboardData = window.dashboardData;
+Chart.register(ChartDataLabels);
+
+new Chart(document.getElementById('feeChart'), {
+    type: 'line',
+
+    data: {
+        labels: dashboardData.feename,
+
+        datasets: [{
+            label: 'Course Fees',
+            data: dashboardData.feevalue,
+
+            borderColor: '#1685ee',
+            backgroundColor: 'rgba(22, 134, 238, 0.84)',
+            pointBackgroundColor: '#f47742',
+            pointBorderColor: '#1685ee',
+            pointRadius: 5,
+            pointHoverRadius: 8,
+            borderWidth: 3,
+            tension: 0.3,
+            fill: true
+        }]
+    },
+
+    options: {
+        responsive: true,
+        maintainAspectRatio: false,
+
+        plugins: {
+            legend: {
+                display: true,
+                position: 'top'
+            },
+
+            tooltip: {
+                callbacks: {
+                    label: function(context) {
+                        return 'Course Fees: ' +
+                            Number(context.parsed.y).toLocaleString();
+                    }
+                }
+            },
+
+            datalabels: {
+                display: true,
+                color: '#e7dfdf',
+                align: 'top',
+                font: {
+                    weight: 'bold',
+                    size: 11
+                },
+                formatter: function(value) {
+                    return Number(value).toLocaleString();
+                }
+            }
+        },
+
+        scales: {
+            y: {
+                beginAtZero: true,
+
+                title: {
+                    display: true,
+                    text: 'Course Cost'
+                }
+            },
+
+                        x: {
+                ticks: {
+                    color: '#ffffff'
+                },
+                title: {
+                    display: true,
+                    text: 'Course Name',
+                    color: '#ffffff'
+                }
+            }
+        }
+    }
+});
+
+new Chart(document.getElementById('enquiryChart'), {
+    type: 'bar',
+
+    data: {
+        labels: dashboardData.course_name,
+        datasets: [{
+            label: 'Number of Enquiries',
+            data: dashboardData.enquirycount,
+
+            backgroundColor: [
+                '#FF6384',
+                '#36A3EB',
+                '#de131d',
+                '#d1db09',
+                '#9966FF',
+                '#c4a4de',
+                '#35b55b',
+                '#bf3de7'
+            ],
+
+            borderRadius: 5
+        }]
+    },
+
+    options: {
+        responsive: true,
+        maintainAspectRatio: false,
+
+        plugins: {
+            legend: {
+                display: false
+            },
+
+            datalabels: {
+                display: true,
+                color: '#fffdfd',
+                anchor: 'end',
+                align: 'top',
+                font: {
+                    weight: 'bold',
+                    size: 12
+                }
+            }
+        },
+
+        scales: {
+            y: {
+                beginAtZero: true,
+                ticks: {
+                    precision: 0
+                },
+                title: {
+                    display: true,
+                    text: 'Number of Enquiries'
+                }
+            },
+
+                    x: {
+                ticks: {
+                    color: '#ffffff'
+                },
+                title: {
+                    display: true,
+                    text: 'Courses',
+                    color: '#ffffff'
+                }
+            }
+        }
+    }
+});

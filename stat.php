@@ -15,32 +15,106 @@ require_once 'db_conn.php';
 	GROUP BY c.course_id,c.course_name
 	ORDER BY c.course_id");
 
-	$coursename = [];
-	$enquirycount = [];
 
-	while ($row = $result->fetch_assoc()) {
-		$coursename[] = $row['course_name'];
-		$enquirycount[] = (int)$row['total'];	
-	}
+$coursename = [];
+$enquirycount = [];
+$feename = [];
+$feevalue = [];
 
-	$result = $conn->query("SELECT c.course_name, COUNT(e.enquiry_id) AS total
-	FROM course c
-	LEFT JOIN enquiries e
-	ON e.course = c.course_name
-	GROUP BY c.course_id,c.course_name
-	ORDER BY total DESC,c.course_name ASC LIMIT 1");
 
-	$mostenquired = $result->fetch_assoc();
 
-	$mostenquiredname = $mostenquired['course_name']??'No course';
-	$mostenquiredcount = (int)
-	($mostenquired['total']??0);
+// Enquiries per course, including courses with zero enquiries
+		$sql = "
+			SELECT course_name, no_enquiries
+			FROM course_view
+			ORDER BY course_name ASC
+		";
 
-	
+		$result = $conn->query($sql);
 
- 
+		$coursename = [];
+		$enquirycount = [];
+
+		while ($row = $result->fetch_assoc()) {
+			$coursename[] = $row['course_name'];
+			$enquirycount[] = (int) $row['no_enquiries'];
+		}
+
+// Fees per course
+$sql = "
+    SELECT
+        course_name,
+        SUM(
+            CAST(
+                REPLACE(
+                    REPLACE(
+                        REPLACE(TRIM(cost), '$', ''),
+                        ',',
+                        ''
+                    ),
+                    ' ',
+                    ''
+                ) AS DECIMAL(10,2)
+            )
+        ) AS total_cost
+    FROM course_table
+    GROUP BY course_name
+    ORDER BY course_name ASC
+";
+
+$result = $conn->query($sql);
+
+$feename = [];
+$feevalue = [];
+
+while ($row = $result->fetch_assoc()) {
+    $feename[] = $row['course_name'];
+    $feevalue[] = (float) $row['total_cost'];
+}
+
+while ($row = $result->fetch_assoc()) {
+    $feename[] = $row['course_name'];
+    $feevalue[] = (float) $row['total_cost'];
+}
+
+while ($row = $result->fetch_assoc()) {
+    $feename[] = $row['course_name'];
+    $feevalue[] = (float) $row['total_cost'];
+}
+
+// Most enquired course
+$mostenquired = [
+    'course_name' => 'No course',
+    'total' => 0
+];
+
+$sql = "
+    SELECT
+        c.course_name,
+        COUNT(e.enquiry_id) AS total
+    FROM course c
+    LEFT JOIN enquiries e
+        ON e.course = c.course_name
+    GROUP BY c.course_id, c.course_name
+    ORDER BY total DESC, c.course_name ASC
+    LIMIT 1
+";
+
+$result = $conn->query($sql);
+
+if ($row = $result->fetch_assoc()) {
+    $mostenquired = $row;
+}
+
+$mostenquiredname = $mostenquired['course_name'];
+$mostenquiredcount = (int) $mostenquired['total'];
+
+// Courses that have at least one enquiry
+$coursesWithEnquiries = count(
+    array_filter($enquirycount, fn($n) => $n > 0)
+);
 ?>
-
+	
 
 <!DOCTYPE html>
 <html>
@@ -85,21 +159,49 @@ require_once 'db_conn.php';
 		<div class="card red">
 			<h3>COURSES  WITH ENQUIRIES <svg xmlns="http://www.w3.org/2000/svg" height="48px" viewBox="0 -960 960 960" width="48px" fill="#e3e3e3"><path d="M560-574v-48q33-14 67.5-21t72.5-7q26 0 51 4t49 10v44q-24-9-48.5-13.5T700-610q-38 0-73 9.5T560-574Zm0 220v-49q33-13.5 67.5-20.25T700-430q26 0 51 4t49 10v44q-24-9-48.5-13.5T700-390q-38 0-73 9t-67 27Zm0-110v-48q33-14 67.5-21t72.5-7q26 0 51 4t49 10v44q-24-9-48.5-13.5T700-500q-38 0-73 9.5T560-464ZM248-300q53.57 0 104.28 12.5Q403-275 452-250v-427q-45-30-97.62-46.5Q301.76-740 248-740q-38 0-74.5 9.5T100-707v434q31-14 70.5-20.5T248-300Zm264 50q50-25 98-37.5T712-300q38 0 78.5 6t69.5 16v-429q-34-17-71.82-25-37.82-8-76.18-8-54 0-104.5 16.5T512-677v427Zm-30 90q-51-38-111-58.5T248-239q-36.54 0-71.77 9T106-208q-23.1 11-44.55-3Q40-225 40-251v-463q0-15 7-27.5T68-761q42-20 87.39-29.5 45.4-9.5 92.61-9.5 63 0 122.5 17T482-731q51-35 109.5-52T712-800q46.87 0 91.93 9.5Q849-781 891-761q14 7 21.5 19.5T920-714v463q0 27.89-22.5 42.45Q875-194 853-208q-34-14-69.23-22.5Q748.54-239 712-239q-63 0-121 21t-109 58ZM276-489Z"/></svg></h3>
 			<h2><?= count(array_filter($enquirycount,fn($n)=> $n > 0)) ?></h2>		
-		</div>
-		
-		
+			</div>
+			</div>	
+			<div class="chart-container">
 
-		
+				<div class="chart-card">
+					<h3>Fees Per Course</h3>
+					<canvas id="feeChart"></canvas>
+				</div>
 
-		
-		
-		</div>	
-		</div>
+				<div class="chart-card2">
+					<h3>Number of Enquiries Per Course</h3>
+					<canvas id="enquiryChart"></canvas>
+				</div>
+
+			</div>
+			</div>
+
+			<script>
+				window.dashboardData = {
+					course_name: <?= json_encode(
+						$coursename,
+						JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP
+					) ?>,
+
+					enquirycount: <?= json_encode($enquirycount) ?>,
+
+					feename: <?= json_encode(
+						$feename,
+						JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP
+					) ?>,
+
+					feevalue: <?= json_encode($feevalue) ?>
+				};
+			</script>
 
 
-	
-
-
-<script src="script.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+		<script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2"></script>
+		<script>
+		console.log("Dashboard data:", window.dashboardData);
+		console.log("Fee values:", window.dashboardData.feevalue);
+		console.log("Enquiry values:", window.dashboardData.enquirycount);
+		</script>
+         <script src="script.js"></script>
 </body>
 </html>

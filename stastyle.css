@@ -120,7 +120,6 @@ a.log:hover {
     width: calc(100%-250px);
     box-sizing: border-box;
     padding:px;
-    background: #f4f4f4;
     font-family: Arial,sans-serif;
 }
 .stats{
@@ -175,4 +174,36 @@ a.log:hover {
      transform: translateY(-1px);
      box-shadow: 0 8px 25px rgba(212, 102, 18, 0.978);
 }
+
+.chart-container {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 24px;
+    margin-top: 24px;
+}
+
+.chart-card,
+.chart-card2 {
+    position: relative;
+    color: white;
+    min-width: 0;
+    height: 350px;
+    padding: 20px;
+    background: #180a51;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+
+.chart-card canvas,
+.chart-card2 canvas {
+    width: 100% !important;
+    height: 300px !important;
+}
+
+@media (max-width: 768px) {
+    .chart-container {
+        grid-template-columns: 1fr;
+    }
+}
+
 
