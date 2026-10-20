@@ -145,9 +145,9 @@ new Chart(document.getElementById('feeChart'), {
             data: dashboardData.feevalue,
 
             borderColor: '#1685ee',
-            backgroundColor: 'rgba(22, 134, 238, 0.84)',
-            pointBackgroundColor: '#f47742',
-            pointBorderColor: '#1685ee',
+            backgroundColor: 'rgb(79, 76, 167)',
+            pointBackgroundColor: '#de1414',
+            pointBorderColor: '#e2e5e7',
             pointRadius: 5,
             pointHoverRadius: 8,
             borderWidth: 3,
@@ -195,7 +195,8 @@ new Chart(document.getElementById('feeChart'), {
 
                 title: {
                     display: true,
-                    text: 'Course Cost'
+                    text: 'Course Cost',
+                    color: '#ffffff'
                 }
             },
 
@@ -228,7 +229,7 @@ new Chart(document.getElementById('enquiryChart'), {
                 '#de131d',
                 '#d1db09',
                 '#9966FF',
-                '#c4a4de',
+                '#0d0abc',
                 '#35b55b',
                 '#bf3de7'
             ],
@@ -266,7 +267,8 @@ new Chart(document.getElementById('enquiryChart'), {
                 },
                 title: {
                     display: true,
-                    text: 'Number of Enquiries'
+                    text: 'Number of Enquiries',
+                    color: '#ffffff'
                 }
             },
 
@@ -283,3 +285,15 @@ new Chart(document.getElementById('enquiryChart'), {
         }
     }
 });
+
+
+//search x button//
+const searchInput = document.querySelector('input[name="search"]');
+
+if (searchInput) {
+    searchInput.addEventListener("search", function () {
+        if (this.value.trim() === "") {
+            window.location.href = "index.php";
+        }
+    });
+}

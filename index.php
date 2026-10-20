@@ -1,8 +1,32 @@
 <?php
 require_once 'db_conn.php';
 
-$sql = "SELECT * FROM enquiries_view";
-$result = $conn->query($sql);
+$search = trim($_GET['search'] ?? '');
+
+if ($search !== '') {
+
+    $sql = "SELECT * FROM enquiries_view WHERE name LIKE ?";
+    $stmt = $conn->prepare($sql);
+
+    $searchTerm = "%" . $search . "%";
+    $stmt->bind_param("s", $searchTerm);
+    $stmt->execute();
+
+    $result = $stmt->get_result();
+
+    // If no matching name is found, return to default index.php
+    if ($result->num_rows === 0) {
+        header("Location: index.php");
+        exit();
+    }
+
+} else {
+
+    // No search term: display all enquiries
+    $sql = "SELECT * FROM enquiries_view";
+    $result = $conn->query($sql);
+
+}
 
 if(isset($_POST['save'])) {
 
@@ -80,7 +104,18 @@ if(isset($_POST['update_btn'])){
 	<body style="margin: 0;">
 		<div>
 			<div class="sidenav">
-				<input type="Search" placeholder="Search Enquires 🔍" name="Search" class="input"><button type="submit" class="btn">Search</button><br><br></h1><br>
+				<form method="GET" action="index.php">
+				<input
+					type="search"
+					name="search"
+					placeholder="Search Enquiries 🔍"
+					class="input"
+					value="<?php echo htmlspecialchars($_GET['search'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
+				<button type="submit" class="btn">
+					Search
+				</button>
+			</form>
+
 				<a href="stat.php" >Stat Dashboard🖥</a>
 				<a href="index.php" >Enquiries</a>
 				<a href="course.php" >Courses</a>
