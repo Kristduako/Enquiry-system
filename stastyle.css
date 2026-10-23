@@ -2,9 +2,10 @@ body {
     margin: 0;
     padding: 0;
     width: 100%;
-    min-height: 100%;
     overflow-x: hidden;
     font-family: Arial, sans-serif;
+    height: 100%;
+    overflow: hidden;
 }
 
 /* Heading */
@@ -24,12 +25,13 @@ body {
 }
 
 .img {
-    width: 50px;
-    height: 50px;
+    width: 110px;
+    height: 90px;
+    background-color: white;
     object-fit: cover;
     border-radius: 50%;
     border: 3px solid white;
-    margin-left: auto;
+    margin-left: 80px;
     flex-shrink: 0;
 }
 
@@ -130,7 +132,7 @@ a.log:hover {
     margin-left: 320px;
     width: calc(100% - 320px);
     min-width: 0;
-    padding: 0 20px 25px;
+    padding-bottom: 0;
     font-family: Arial, sans-serif;
 }
 
@@ -143,12 +145,14 @@ a.log:hover {
 .stats {
     display: grid;
     grid-template-columns: repeat(4, minmax(0, 1fr));
-    gap: 15px;
+    gap: 10px;
     width: 97%;
     margin: 20px 0 25px;
+    margin-left: 20px;
 }
 
 .card {
+    height: 90px;
     min-width: 0;
     padding: 15px;
     color: white;
@@ -162,6 +166,7 @@ a.log:hover {
 }
 
 .card h3 {
+    
     font-size: 12px;
     line-height: 1.5;
     margin: 0 0 10px;
@@ -184,28 +189,28 @@ a.log:hover {
 .blue {
     background-color: #172A46;
     border-left: 15px solid #38BDF8;
-    color: #60A5FA;
+    color: #f2f3f4;
     font-family: Georgia, serif;
 }
 
 .orange {
     background-color: #3B3020;
     border-left: 15px solid #FACC15;
-    color: #FACC15;
+    color: #fbfcfce1;
     font-family: Georgia, serif;
 }
 
 .green {
     background-color: #183329;
     border-left: 15px solid #4ADE80;
-    color: #4ADE80;
+    color:white;
     font-family: Georgia, serif;
 }
 
 .red {
     background-color: #3A2028;
     border-left: 15px solid #FB7185;
-    color: #FB7185;
+    color:white;
     font-family: Georgia, serif;
 }
 
@@ -222,9 +227,9 @@ a.log:hover {
 .chart-container {
     display: grid;
     grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 15px;
+    gap: 10px;
     width: 100%;
-    margin: 20px 0;
+margin-left: 20px;
 }
 
 .chart-card,
@@ -232,14 +237,31 @@ a.log:hover {
     position: relative;
     width: 90%;
     min-width: 0;
-    height: 320px;
+    height: 200px;
     padding: 10px;
     color: white;
     background: #180a51;
     border-radius: 12px;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
 }
-
+.chart-card3{
+    position: relative;
+    width: 195%;
+    min-width: 0;
+    height: 280px;
+    padding: 15px;
+    color: rgb(255, 253, 253);
+    background: rgb(30, 10, 102);
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    box-sizing: border-box;
+    overflow: hidden;
+}
+#timeChart {
+    display: block;
+    width: 80% !important;
+    height: 160px !important;
+}
 .chart-card h3,
 .chart-card2 h3 {
     font-size: 15px;
@@ -252,6 +274,23 @@ a.log:hover {
     width: 80% ;
     max-width: 100%;
     height: 230px ;
+}
+.chart-container .chart-card:last-child {
+    grid-column: 1 / -1;
+    width: 97%;
+    height: 200px;
+    min-height: 450px;
+    box-sizing: border-box;
+    padding: 10px;
+    overflow: hidden;
+    margin-bottom: 0;
+}
+
+.chart-container .chart-card:last-child canvas {
+    display: block;
+    width: 50% !important;
+    height: 50px !important;
+    max-width: 100%;
 }
 
 /* Medium screens */
@@ -291,7 +330,7 @@ a.log:hover {
 
     .stats {
         grid-template-columns: 1fr;
-        gap: 10px;
+        gap: 5px;
     }
 
     .chart-card,
@@ -309,4 +348,20 @@ a.log:hover {
         left: 12px;
         bottom: 10px;
     }
+}
+
+#enquiryPeriod {
+    background: #0f172a;
+    color: white;
+    border: 1px solid #38BDF8;
+    border-radius: 6px;
+    padding: 8px 12px;
+    margin: 8px 0 12px;
+    cursor: pointer;
+    max-width: 100%;
+}
+
+#timeChart {
+    width: 100% !important;
+   
 }

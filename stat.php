@@ -113,6 +113,35 @@ $mostenquiredcount = (int) $mostenquired['total'];
 $coursesWithEnquiries = count(
     array_filter($enquirycount, fn($n) => $n > 0)
 );
+
+// Enquiries over time
+$sql = "
+    SELECT MONTH(`date`) AS enquiry_month,
+           COUNT(*) AS total
+    FROM enquiries
+    WHERE `date` IS NOT NULL
+      AND YEAR(`date`) = YEAR(CURDATE())
+    GROUP BY MONTH(`date`)
+    ORDER BY enquiry_month ASC
+";
+
+$result = $conn->query($sql);
+
+$monthlyTotals = array_fill(1, 12, 0);
+
+while ($row = $result->fetch_assoc()) {
+    $monthlyTotals[(int)$row['enquiry_month']] = (int)$row['total'];
+}
+
+$monthLabels = [
+    'January', 'February', 'March', 'April',
+    'May', 'June', 'July', 'August',
+    'September', 'October', 'November', 'December'
+];
+
+$enquiryDates = $monthLabels;
+$enquiryTotals = array_values($monthlyTotals);
+
 ?>
 	
 
@@ -125,20 +154,19 @@ $coursesWithEnquiries = count(
 	<link rel="stylesheet" type="text/css" href="stastyle.css">
 </head>
 <body>
-	<h1 class="h1">Statistics Dashboard<img src="gi kace.jpeg" class="img"></h1>
+	<h1 class="h1">Statistics Dashboard</h1>
 		<div>
 			<div class="sidenav">
-				<input type="Search" placeholder="Search Enquires 🔍" name="Search" class="input"><button type="submit" class="btn">Search</button><br><br></h1><br>
+				<img src="gi kace.jpeg" class="img">
 				<a href="stat.php" >Stat Dashboard🖥</a>
 				<a href="index.php" >Enquiries</a>
 				<a href="course.php" >Courses</a>
 					
 			</div>
 
-			<a href="Login.html" class="log">Logout</a>
+			<a href="Login.php" class="log">Logout</a>
 		</div>
 		<div class="dashboard">
-			<h3>DASHBOARD</h3>
 		<div class="stats">
 
 		<div class="card blue">
@@ -152,8 +180,8 @@ $coursesWithEnquiries = count(
 		</div>
 
 		<div class="card green">
-			<h3> MOST ENQUIRIED COURSE  <svg xmlns="http://www.w3.org/2000/svg" height="48px" viewBox="0 -960 960 960" width="48px" fill="#e3e3e3"><path d="M180-120q-24.75 0-42.37-17.63Q120-155.25 120-180v-600q0-24.75 17.63-42.38Q155.25-840 180-840h205q5-35 32-57.5t63-22.5q36 0 63 22.5t32 57.5h205q24.75 0 42.38 17.62Q840-804.75 840-780v600q0 24.75-17.62 42.37Q804.75-120 780-120H180Zm0-60h600v-600H180v600Zm100-100h273v-60H280v60Zm0-170h400v-60H280v60Zm0-170h400v-60H280v60Zm224.5-187.5Q515-818 515-832t-10.5-24.5Q494-867 480-867t-24.5 10.5Q445-846 445-832t10.5 24.5Q466-797 480-797t24.5-10.5ZM180-180v-600 600Z"/></svg> </h3>
-			<h2><?= htmlspecialchars($mostenquiredname) ?></h2>
+			<h3> MOST ENQUIRIED COURSE <svg xmlns="http://www.w3.org/2000/svg" height="48px" viewBox="0 -960 960 960" width="48px" fill="#e3e3e3"><path d="M180-120q-24.75 0-42.37-17.63Q120-155.25 120-180v-600q0-24.75 17.63-42.38Q155.25-840 180-840h205q5-35 32-57.5t63-22.5q36 0 63 22.5t32 57.5h205q24.75 0 42.38 17.62Q840-804.75 840-780v600q0 24.75-17.62 42.37Q804.75-120 780-120H180Zm0-60h600v-600H180v600Zm100-100h273v-60H280v60Zm0-170h400v-60H280v60Zm0-170h400v-60H280v60Zm224.5-187.5Q515-818 515-832t-10.5-24.5Q494-867 480-867t-24.5 10.5Q445-846 445-832t10.5 24.5Q466-797 480-797t24.5-10.5ZM180-180v-600 600Z"/></svg> </h3>
+			<h3><?= htmlspecialchars($mostenquiredname) ?></h3>
 			<p><?= $mostenquiredcount ?> Enquires recieved</P>
 		</div>
 		<div class="card red">
@@ -172,10 +200,12 @@ $coursesWithEnquiries = count(
 					<h3>Number of Enquiries Per Course</h3>
 					<canvas id="enquiryChart"></canvas>
 				</div>
-
+					<div class="chart-card3">
+					<h3>Enquiries Over Time</h3>
+					<canvas id="timeChart"></canvas>
+				</div>
 			</div>
 			</div>
-
 			<script>
 				window.dashboardData = {
 					course_name: <?= json_encode(
@@ -190,18 +220,23 @@ $coursesWithEnquiries = count(
 						JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP
 					) ?>,
 
-					feevalue: <?= json_encode($feevalue) ?>
+					feevalue: <?= json_encode($feevalue) ?>,
+					enquiryDates: <?= json_encode($enquiryDates) ?>,
+					enquiryTotals: <?= json_encode($enquiryTotals) ?>
 				};
 			</script>
 
 
-        <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js"></script>
+
 		<script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2"></script>
+
 		<script>
 		console.log("Dashboard data:", window.dashboardData);
 		console.log("Fee values:", window.dashboardData.feevalue);
 		console.log("Enquiry values:", window.dashboardData.enquirycount);
 		</script>
-         <script src="script.js"></script>
+
+        <script src="script.js"></script>
 </body>
 </html>

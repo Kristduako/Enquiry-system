@@ -1,13 +1,26 @@
  <?php
 require_once 'db_conn.php';
+$search = trim($_GET['search'] ?? '');
 
-$sql = "SELECT * FROM course_table";
-$result = $conn->query($sql);
+if ($search !== '') {
 
-    if(!$result){
-        die("SQL Query failed:".$conn->error);
-    }
+    // Search courses
+    $sql = "SELECT * FROM course_view WHERE course_name LIKE ?";
+    $stmt = $conn->prepare($sql);
 
+    $searchTerm = "%" . $search . "%";
+    $stmt->bind_param("s", $searchTerm);
+    $stmt->execute();
+
+    $result = $stmt->get_result();
+
+} else {
+
+    // Display all courses
+    $sql = "SELECT * FROM course_view";
+    $result = $conn->query($sql);
+
+}
     if(isset($_POST['save'])) {
 
 	$course_name= $_POST['course_name'];
@@ -83,17 +96,17 @@ $result = $conn->query($sql);
 	<link rel="stylesheet" type="text/css" href="Course.css">
 </head>
 <body>
-	<h1 class="h1">Enquiries course Table🖥<img src="gi kace.jpeg" class="img"><br></h1>
+	<h1 class="h1">Enquiries course Table🖥<br></h1>
 	<div>
 			<div class="sidenav">
-				<input type="Search" placeholder="Search Enquires 🔍" name="Search" class="input"><button type="submit" class="btn">Search</button><br><br></h1><br>
+				<img src="gi kace.jpeg" class="img">
 				<a href="stat.php" >Stat Dashboard🖥</a>
 				<a href="index.php" >Enquiries</a>
 				<a href="course.php" >Courses</a>
 				
 			</div>
 
-			<a href="Login.html" class="log">Logout</a>
+			<a href="Login.php" class="log">Logout</a>
 		</div>
 	 <nav class="nav1">
         <h1  class="h2">Course Table</h1>
@@ -107,9 +120,19 @@ $result = $conn->query($sql);
                 <th class="table1">
                     
                 </th>
-                <button type="button" class="ahref" onclick="opencourse_EnquiryModal()">➕ Add course</button>
-                
-                <?php
+					<div class="search">	
+							<form method="GET" action="course.php">
+								<input
+									type="search"
+									name="search"
+									placeholder="Search Courses 🔍"
+									class="input"
+									value="<?php echo htmlspecialchars($search, ENT_QUOTES, 'UTF-8'); ?>"
+								><button type="submit" class="btn">Search</button>
+								</form>
+								<button type="button" class="ahref" onclick="opencourse_EnquiryModal()">➕ Add course</button>
+					</div>
+			<?php
                 if($result && $result->num_rows > 0)
                     {
                         while($row = $result-> fetch_assoc()){

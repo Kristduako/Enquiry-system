@@ -1,282 +1,438 @@
 <?php
 require_once 'db_conn.php';
 
+mysqli_report(MYSQLI_REPORT_ERROR | MYSQLI_REPORT_STRICT);
+
+$error = '';
+$successMessages = [
+    'success' => 'Enquiry added successfully.',
+    'updated' => 'Enquiry updated successfully.',
+    'deleted' => 'Enquiry deleted successfully.'
+];
+
+function e($value) {
+    return htmlspecialchars((string)$value, ENT_QUOTES, 'UTF-8');
+}
+
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    try {
+        // DELETE ENQUIRY
+        if (isset($_POST['confirm_Delete'])) {
+            $enquiry_id = filter_var(
+                $_POST['enquiry_id'] ?? '',
+                FILTER_VALIDATE_INT
+            );
+
+            if (!$enquiry_id || $enquiry_id < 1) {
+                throw new RuntimeException('Invalid enquiry ID.');
+            }
+
+            $stmt = $conn->prepare(
+                'DELETE FROM enquiries WHERE enquiry_id = ?'
+            );
+            $stmt->bind_param('i', $enquiry_id);
+            $stmt->execute();
+
+            if ($stmt->affected_rows !== 1) {
+                $stmt->close();
+                throw new RuntimeException(
+                    'The enquiry was not found or was already deleted.'
+                );
+            }
+
+            $stmt->close();
+
+            header('Location: index.php?deleted=1');
+            exit();
+        }
+
+        // CREATE OR UPDATE ENQUIRY
+        if (isset($_POST['save']) || isset($_POST['update_btn'])) {
+            $name = trim($_POST['name'] ?? '');
+            $course = trim($_POST['course'] ?? '');
+            $date = trim($_POST['date'] ?? '');
+            $contact = trim($_POST['contact'] ?? '');
+            $address = trim($_POST['address'] ?? '');
+            $enquiry_id = filter_var(
+                $_POST['enquiry_id'] ?? '',
+                FILTER_VALIDATE_INT
+            );
+            $isUpdate = isset($_POST['update_btn'])
+                || ($enquiry_id !== false && $enquiry_id !== null
+                    && $enquiry_id !== '');
+
+            if (
+                $name === '' ||
+                $course === '' ||
+                $date === '' ||
+                $contact === '' ||
+                $address === ''
+            ) {
+                throw new RuntimeException(
+                    'Please complete all enquiry fields.'
+                );
+            }
+
+            if (
+                $isUpdate &&
+                (!$enquiry_id || $enquiry_id < 1)
+            ) {
+                throw new RuntimeException(
+                    'Invalid enquiry ID for updating.'
+                );
+            }
+            $dateObject = DateTime::createFromFormat('!Y-m-d', $date);
+
+            if (
+                !$dateObject ||
+                $dateObject->format('Y-m-d') !== $date
+            ) {
+                throw new RuntimeException(
+                    'Please enter a valid enquiry date.'
+                );
+            }
+
+            if ($isUpdate) {
+                $stmt = $conn->prepare(
+                    'UPDATE enquiries
+                     SET name = ?, course = ?, `date` = ?,
+                         contact = ?, address = ?
+                     WHERE enquiry_id = ?'
+                );
+
+                $stmt->bind_param(
+                    'sssssi',
+                    $name,
+                    $course,
+                    $date,
+                    $contact,
+                    $address,
+                    $enquiry_id
+                );
+
+                $stmt->execute();
+                $stmt->close();
+
+                header('Location: index.php?updated=1');
+                exit();
+            } else {
+                // INSERT into the underlying table, NOT the view.
+                $stmt = $conn->prepare(
+                    'INSERT INTO enquiries
+                        (name, course, `date`, contact, address)
+                     VALUES (?, ?, ?, ?, ?)'
+                );
+
+                $stmt->bind_param(
+                    'sssss',
+                    $name,
+                    $course,
+                    $date,
+                    $contact,
+                    $address
+                );
+
+                $stmt->execute();
+                $stmt->close();
+
+                header('Location: index.php?success=1');
+                exit();
+            }
+        }
+    } catch (RuntimeException $ex) {
+        $error = $ex->getMessage();
+    } catch (mysqli_sql_exception $ex) {
+        // Log detailed errors on the server, not in the browser.
+        error_log('Enquiry database error: ' . $ex->getMessage());
+        $error = 'The enquiry could not be saved. Please check the '
+               . 'database configuration and try again.';
+    }
+}
+
 $search = trim($_GET['search'] ?? '');
 
-if ($search !== '') {
+try {
+    if ($search !== '') {
+        $stmt = $conn->prepare(
+            'SELECT * FROM enquiries_view WHERE name LIKE ?'
+        );
 
-    $sql = "SELECT * FROM enquiries_view WHERE name LIKE ?";
-    $stmt = $conn->prepare($sql);
+        $searchTerm = '%' . $search . '%';
+        $stmt->bind_param('s', $searchTerm);
+        $stmt->execute();
 
-    $searchTerm = "%" . $search . "%";
-    $stmt->bind_param("s", $searchTerm);
-    $stmt->execute();
-
-    $result = $stmt->get_result();
-
-    // If no matching name is found, return to default index.php
-    if ($result->num_rows === 0) {
-        header("Location: index.php");
-        exit();
+        $result = $stmt->get_result();
+    } else {
+        $result = $conn->query(
+            'SELECT * FROM enquiries_view'
+        );
     }
-
-} else {
-
-    // No search term: display all enquiries
-    $sql = "SELECT * FROM enquiries_view";
-    $result = $conn->query($sql);
-
+} catch (mysqli_sql_exception $ex) {
+    error_log('Enquiry retrieval error: ' . $ex->getMessage());
+    $error = 'Unable to load enquiries. Please try again.';
+    $result = false;
 }
 
-if(isset($_POST['save'])) {
+$notice = '';
+$status = $_GET['status'] ?? '';
 
-	$name = $_POST['name'];
-	$course = $_POST['course'];
-	$date = $_POST['date'];
-	$contact = $_POST['contact'];
-	$address = $_POST['address'];
-
-	$sql = "INSERT INTO enquiries_view (name,course,date,contact,address) 
-	VALUES('$name','$course','$date','$contact','$address')";
-
-	if(mysqli_query($conn,$sql)){
-
-		header("Location:index.php?success=1");
-	}else{
-		echo"error".mysqli_error($conn);
-		exit();
-	}
+if (isset($successMessages[$status])) {
+    $notice = $successMessages[$status];
 }
 
-	if(isset($_POST['confirm_Delete'])){
-		$enquiry_id = $_POST['enquiry_id'];
-		$delete_sql = "DELETE FROM enquiries WHERE enquiry_id = '$enquiry_id' ";
-
-		if(mysqli_query($conn,$delete_sql)){
-			header("Location: index.php?deleted=1");
-			exit();
-
-		}else{
-			echo"Error deleting record:".mysqli_error($conn);
-			exit();
-		}
-
-	}
-
-if(isset($_POST['update_btn'])){
-	$enquiry_id = $_POST['enquiry_id'];
-	$name = $_POST['name'];
-	$course = $_POST['course'];
-	$date = $_POST['date'];
-	$address = $_POST['address'];
-	$contact = $_POST['contact'];
-	
-
-	$update_sql = "UPDATE enquiries_view SET
-	 `name` ='$name',
-	 `course` ='$course',
-	 `date`= '$date',
-	 `address`='$address',
-	 `contact` ='$contact'
-	 
-	 WHERE `enquiry_id`='$enquiry_id'";
-	 
-		if(mysqli_query($conn,$update_sql)){
-			header("Location: index.php?updated=1");
-			exit();
-
-		}else{
-			echo"Error updating record:".mysqli_error($conn);
-			exit();
-		}
+if (isset($_GET['success'])) {
+    $notice = $successMessages['success'];
+} elseif (isset($_GET['updated'])) {
+    $notice = $successMessages['updated'];
+} elseif (isset($_GET['deleted'])) {
+    $notice = $successMessages['deleted'];
 }
-
 ?>
 <!DOCTYPE html>
-<html>
-	<head>
-		<meta charset="utf-8">
-		<meta name="viewport" content="width=device-width, initial-scale=1">
-		<title>Enquir Dashboard🖥</title>
-		<link rel="stylesheet" type="text/css" href="style.css">
-	
-	</head>
-	<body style="margin: 0;">
-		<div>
-			<div class="sidenav">
-				<form method="GET" action="index.php">
-				<input
-					type="search"
-					name="search"
-					placeholder="Search Enquiries 🔍"
-					class="input"
-					value="<?php echo htmlspecialchars($_GET['search'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
-				<button type="submit" class="btn">
-					Search
-				</button>
-			</form>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Enquiry Dashboard 🖥</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
 
-				<a href="stat.php" >Stat Dashboard🖥</a>
-				<a href="index.php" >Enquiries</a>
-				<a href="course.php" >Courses</a>
-				
-			</div>
+    <div class="sidenav">
+        <img src="gi kace.jpeg" class="img" alt="Dashboard logo">
+        <a href="stat.php">Stat Dashboard 🖥</a>
+        <a href="index.php" class="active">Enquiries</a>
+        <a href="course.php">Courses</a>
+    </div>
 
-			<a href="Login.html" class="log">Logout</a>
+    <a href="Login.php" class="log">Logout</a>
+
+    <nav>
+        <h1 class="new1">Enquiries System View 🖥</h1>
+    </nav>
+
+    <div class="container">
+
+        <h1 class="h1">Enquiry Table</h1>       
+				<?php if ($notice !== ''): ?>
+					<div class="flash-message flash-success" role="status">
+						<?= e($notice) ?>
+					</div>
+				<?php endif; ?>
+
+				<?php if ($error !== ''): ?>
+					<div class="flash-message flash-error" role="alert">
+						<?= e($error) ?>
+					</div>
+				<?php endif; ?>
+
+			<div class="search">
+        <form method="GET" action="index.php">
+            <input
+                type="search"
+                name="search"
+                placeholder="Search Enquiries 🔍"
+                class="input"
+                value="<?= e($search) ?>"
+            >
+            <button type="submit" class="btn">Search</button>
+        </form>
+
+        <button
+            type="button"
+            class="ahref"
+            onclick="openEnquiryModal()"
+        >
+            ➕ New Enquiry
+        </button>
 		</div>
-		
-        <nav>
-		      <h1 class="new1">Enquiries System View🖥<img src="gi kace.jpeg" class="img"><br>
-        </nav><br>
-		<div class="container">
-        
-            <h1 class="h1">Enquiry Table</h1>
-			
-		  <table class="table">
-			<tr id="record-1"  >
-                <th class="table1" >
-                    Name
-                </th>
-                <th class="table1" >
-                	Course
-                </th>
-                <th class="table1" >
-                	Date
-                </th>
-                
-                <th class="table1" >
-                	Contact
-                </th>
-				<th class="table1" >
-                	Address
-                </th>
-                <th class="table1">
-                    
-                </th>
-                <th class="table1">
-                    
-                </th>
-				<button type="button" class="ahref" onclick="openEnquiryModal()">➕ New Enquiry</button>
-            </tr>
+        <table class="table">
+            <thead>
+                <tr>
+                    <th class="table1">Name</th>
+                    <th class="table1">Course</th>
+                    <th class="table1">Date</th>
+                    <th class="table1">Contact</th>
+                    <th class="table1">Address</th>
+                    <th class="table1">Edit</th>
+                    <th class="table1">Delete</th>
+                </tr>
+            </thead>
 
-			
-			<?php
-			if($result->num_rows > 0){
-				while($row = $result-> fetch_assoc()){
+            <tbody>
+            <?php if ($result && $result->num_rows > 0): ?>
+                <?php while ($row = $result->fetch_assoc()): ?>
+                    <?php $id = (int)$row['enquiry_id']; ?>
 
-				    echo "<tr id='row-".$row['enquiry_id']."'>";
-				    echo "<td class='table2' id='name-". 
-					$row['enquiry_id']."'>"
-					.htmlspecialchars($row['name'])."</td>";
+                    <tr id="row-<?= $id ?>">
+                        <td class="table2" id="name-<?= $id ?>">
+                            <?= e($row['name']) ?>
+                        </td>
 
-					echo "<td class='table2' id='course-". 
-					$row['enquiry_id']."'>"
-					.htmlspecialchars($row['course'])."</td>";
+                        <td class="table2" id="course-<?= $id ?>">
+                            <?= e($row['course']) ?>
+                        </td>
 
-					echo "<td class='table2' id='date-".$row['enquiry_id']."'>"
-						.htmlspecialchars($row['date'])."</td>";
+                        <td class="table2" id="date-<?= $id ?>">
+                            <?= e($row['date']) ?>
+                        </td>
 
-					echo "<td class='table2' id='contact-".$row['enquiry_id']."'>"
-						.htmlspecialchars($row['contact'])."</td>";
+                        <td class="table2" id="contact-<?= $id ?>">
+                            <?= e($row['contact']) ?>
+                        </td>
 
-					echo "<td class='table2' id='address-".$row['enquiry_id']."'>"
-						.htmlspecialchars($row['address'])."</td>";
+                        <td class="table2" id="address-<?= $id ?>">
+                            <?= e($row['address']) ?>
+                        </td>
 
-					echo "<td class='table2'>";
-					echo "<button
-					onclick='editRecords(" .
-					$row['enquiry_id'] . ")'class='edit'>✍🏼</button>";
-					echo"</td>";
+                        <td class="table2">
+                            <button
+                                type="button"
+                                onclick="editRecords(<?= $id ?>)"
+                                class="edit"
+                                aria-label="Edit enquiry <?= $id ?>"
+                            >✍🏼</button>
+                        </td>
 
-					echo "<td class='table2'>";
-					echo "<button
-					onclick='deleteRecords(". $row['enquiry_id'].")' class='Delete'>🗑️</button>";
-					echo"</td>";
-					
-				}
+                        <td class="table2">
+                            <button
+                                type="button"
+                                onclick="deleteRecords(<?= $id ?>)"
+                                class="Delete"
+                                aria-label="Delete enquiry <?= $id ?>"
+                            >🗑️</button>
+                        </td>
+                    </tr>
+                <?php endwhile; ?>
 
-			} else {
-				echo"<tr><td colspan='8'> No enquiries found </td></tr>";
-			}
-			?>
-			</table>
-			</div>
-			</div>
-			//add new enquiry//
+            <?php else: ?>
+                <tr>
+                    <td class="table2" colspan="7">
+                        No enquiries found.
+                    </td>
+                </tr>
+            <?php endif; ?>
+            </tbody>
+        </table>
+    </div>
 
-			<div id="enquiryModal" class="modal-overlay">
-				<div class="modal-content">
-					<h1 class="h1">ENQUIRY FORM 📚</h1><p>Create a New Enquiry Form </p>
-						
-					<form method ="POST" action="index.php" >
-						<input type = "hidden" name="enquiry_id" id="edit_enquiry_id">
-							<label class="lb1">Name</label><br>
-							<input type="text" name="name" class="input2" id="name"><br>
-							
-							<label class="lb1">Course</label><br>
-							<SELECT Name="course" class="input2" id="course">
-								<option value="">Selecct Course</option>
-								<option value="OPS">OPS</option>
-								<option value="CISA(weekdays)">CISA(weekdays)</option>
-								<option value="CISA(weekdends)">CISA(weekdends)</option>
-								<option value="CCNA(weekdays)">CCNA(weekdays)</option>
-								<option value="CCNA(weekends)">CCNA(weekends)</option>
-								<option value="CSD">CSD</option>
-								<option value="Cyber security">Cyber security</option>
-							</SELECT><br>
+    <!-- Create/Edit Enquiry Modal -->
+    <div id="enquiryModal" class="modal-overlay">
+        <div class="modal-content">
+            <h1 class="h1">ENQUIRY FORM 📚</h1>
+            <p>Create or update an enquiry.</p>
 
-							<label class="lb1">Date 📅</label><br>
-							<input type="Date" name="date" class="input2" id="date"><br>
+            <form method="POST" action="index.php" id="enquiryForm">
+                <input
+                    type="hidden"
+                    name="enquiry_id"
+                    id="edit_enquiry_id"
+                    value=""
+                >
 
+                <label class="lb1" for="name">Name</label><br>
+                <input
+                    type="text"
+                    name="name"
+                    class="input2"
+                    id="name"
+                    required
+                ><br>
 
-							<label class="lb1">Address
-							<input type="text" name="address" class="input2" id="address"><br>
-							</label>
-		
-							<label class="lb1">Contact📞</label><br>
-							<input type="text" name="contact" class="input2" id="contact"><br><br>
-							
-							<button type="submit" name="save" id="submitBtn"  value = "1" class="btn">
-								Save
-							</button>
-							<button type="button" onclick="closeEnquiryModal()" class="btn">Cancel</button>
-						</form>
-            	
-				</div>
+                <label class="lb1" for="course">Course</label><br>
+                <select
+                    name="course"
+                    class="input2"
+                    id="course"
+                    required
+                >
+                    <option value="">Select Course</option>
+                    <option value="OPS">OPS</option>
+                    <option value="CISA(weekdays)">CISA (weekdays)</option>
+                    <option value="CISA(weekdends)">CISA (weekends)</option>
+                    <option value="CCNA(weekdays)">CCNA (weekdays)</option>
+                    <option value="CCNA(weekends)">CCNA (weekends)</option>
+                    <option value="CSD">CSD</option>
+                    <option value="Cyber security">Cyber security</option>
+                </select><br>
 
-			</div>
-			```html
-						<!-- Delete Confirmation Popup -->
-						<div id="deleteModal" class="modal">
-							<div class="modal-box">
-							
+                <label class="lb1" for="date">Date 📅</label><br>
+                <input
+                    type="date"
+                    name="date"
+                    class="input2"
+                    id="date"
+                    required
+                ><br>
 
-								<h2>Delete Enquiry</h2>
+                <label class="lb1" for="address">Address</label><br>
+                <input
+                    type="text"
+                    name="address"
+                    class="input2"
+                    id="address"
+                    required
+                ><br>
 
-								<p>Are you sure you want to delete this enquiry?</p>
-								<form method="POST" action="index.php">
-									<input type="hidden" name="enquiry_id" id="modal_enquiry_id" value="">  
+                <label class="lb1" for="contact">Contact 📞</label><br>
+                <input
+                    type="text"
+                    name="contact"
+                    class="input2"
+                    id="contact"
+                    required
+                ><br><br>
 
-								
+                <button
+                    type="submit"
+                    name="save"
+                    id="submitBtn"
+                    value="1"
+                    class="btn"
+                >Save</button>
 
-								<div class="modal-buttons">
-									<button type="button" class="cancel-btn" onclick="closeDeleteModal()">
-										Cancel
-									</button>
+                <button
+                    type="button"
+                    onclick="closeEnquiryModal()"
+                    class="btn"
+                >Cancel</button>
+            </form>
+        </div>
+    </div>
 
-									<button type="submit" class="delete-btn" name="confirm_Delete">
-										Delete
-									</button>
-								</div>
-							</form>
+    <!-- Delete Confirmation Modal -->
+    <div id="deleteModal" class="modal">
+        <div class="modal-box">
+            <h2>Delete Enquiry</h2>
+            <p>Are you sure you want to delete this enquiry?</p>
 
-							</div>
-						</div>
-						```
+            <form method="POST" action="index.php">
+                <input
+                    type="hidden"
+                    name="enquiry_id"
+                    id="modal_enquiry_id"
+                    value=""
+                >
 
-		
-				
-		<script src="script.js"></script>
-            
-	</body>
+                <div class="modal-buttons">
+                    <button
+                        type="button"
+                        class="cancel-btn"
+                        onclick="closeDeleteModal()"
+                    >Cancel</button>
+
+                    <button
+                        type="submit"
+                        class="delete-btn"
+                        name="confirm_Delete"
+                        value="1"
+                    >Delete</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
 </html>

@@ -286,14 +286,167 @@ new Chart(document.getElementById('enquiryChart'), {
     }
 });
 
+//Enquiries per day//
+const dates = dashboardData.enquiryDates || [];
+const totals = dashboardData.enquiryTotals || [];
 
-//search x button//
-const searchInput = document.querySelector('input[name="search"]');
+const timeCanvas = document.getElementById("timeChart");
 
-if (searchInput) {
-    searchInput.addEventListener("search", function () {
-        if (this.value.trim() === "") {
-            window.location.href = "index.php";
+if (timeCanvas) {
+    const monthLabels = [
+        "January", "February", "March", "April",
+        "May", "June", "July", "August",
+        "September", "October", "November", "December"
+    ];
+
+    
+    const monthlyTotals = Array(12).fill(0);
+
+    dates.forEach((date, index) => {
+        let monthIndex = -1;
+
+        if (/^\d{4}-\d{2}/.test(date)) {
+            monthIndex = parseInt(date.substring(5, 7), 10) - 1;
+        } else {
+            monthIndex = monthLabels.findIndex(
+                month => month.toLowerCase() === date.toLowerCase()
+            );
+        }
+
+        if (monthIndex >= 0 && monthIndex < 12) {
+            monthlyTotals[monthIndex] += Number(totals[index] || 0);
+        }
+    });
+
+    new Chart(timeCanvas, {
+        type: "bar",
+
+        data: {
+            labels: monthLabels,
+
+            datasets: [{
+                label: "Enquiries",
+                data: monthlyTotals,
+                backgroundColor: "#0b588c",
+                borderColor: "#36a2eb",
+                borderWidth: 1,
+                borderRadius: 5
+            }]
+        },
+
+        options: {
+            indexAxis: "x",
+            responsive: true,
+            maintainAspectRatio: false,
+
+            layout: {
+                padding: {
+                    top: 15,
+                    right: 15,
+                    bottom: 5,
+                    left: 5
+                }
+            },
+
+            plugins: {
+                legend: {
+                    display: false
+                },
+
+                tooltip: {
+                    callbacks: {
+                        label: context =>
+                            "Enquiries: " + context.parsed.y
+                    }
+                },
+                    datalabels: {
+                display: true,
+                color: "#ffffff",
+                anchor: "end",
+                align: "top",
+                offset: 4,
+                font: {
+                    weight: "bold",
+                    size: 12
+                },
+                formatter: function(value) {
+                    return value;
+                }
+            }
+               
+            },
+
+            scales: {
+                x: {
+                    ticks: {
+                        color: "#ffffff",
+                        autoSkip: false,
+                        maxRotation: 0,
+                        minRotation: 0
+                    },
+
+                    title: {
+                        display: true,
+                        text: "Months",
+                        color: "#ffffff"
+                    },
+
+                    grid: {
+                        display: false
+                    }
+                },
+
+                y: {
+                    beginAtZero: true,
+                    grace: "10%",
+
+                    ticks: {
+                        precision: 0,
+                        color: "#ffffff"
+                    },
+
+                    title: {
+                        display: true,
+                        text: "Number of Enquiries",
+                        color: "#ffffff"
+                    }
+                }
+            }
         }
     });
 }
+
+
+
+//search x button//
+document.querySelectorAll('input[name="search"]').forEach(function (searchInput) {
+    searchInput.addEventListener("search", function () {
+        if (this.value.trim() === "") {
+            window.location.href = window.location.pathname;
+        }
+    });
+});
+//login//
+function login(event) {
+        event.preventDefault();
+
+        const username = document.getElementById("username").value;
+        const password = document.getElementById("password").value;
+        const message = document.getElementById("message");
+
+        if (
+            (username === "user1" && password === "pass123") ||
+            (username === "user2" && password === "pass456")
+        ) {
+            message.textContent = "Welcome, " + username + "! 🎉";
+            message.style.color = "green";
+
+            setTimeout(function () {
+                window.location.href = "stat.php";
+            }, 3300);
+
+        } else {
+            message.textContent = "Invalid username or password! ❌";
+            message.style.color = "red";
+        }
+    }
