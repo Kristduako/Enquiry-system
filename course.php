@@ -100,7 +100,7 @@ if ($search !== '') {
 	<div>
 			<div class="sidenav">
 				<img src="gi kace.jpeg" class="img">
-				<a href="stat.php" >Stat Dashboard🖥</a>
+				<a href="stat.php" >Dashboard🖥</a>
 				<a href="index.php" >Enquiries</a>
 				<a href="course.php" >Courses</a>
 				

@@ -201,7 +201,7 @@ if (isset($_GET['success'])) {
 
     <div class="sidenav">
         <img src="gi kace.jpeg" class="img" alt="Dashboard logo">
-        <a href="stat.php">Stat Dashboard 🖥</a>
+        <a href="stat.php">Dashboard 🖥</a>
         <a href="index.php" class="active">Enquiries</a>
         <a href="course.php">Courses</a>
     </div>
@@ -270,8 +270,8 @@ if (isset($_GET['success'])) {
                             <?= e($row['name']) ?>
                         </td>
 
-                        <td class="table2" id="course-<?= $id ?>">
-                            <?= e($row['course']) ?>
+                        <td class="table2" id="course_nam-<?= $id ?>">
+                            <?= e($row['course_name']) ?>
                         </td>
 
                         <td class="table2" id="date-<?= $id ?>">

@@ -131,291 +131,243 @@ function editcourse(id) {
 
 
 // Graph //
-const dashboardData = window.dashboardData;
-Chart.register(ChartDataLabels);
 
-new Chart(document.getElementById('feeChart'), {
-    type: 'line',
+document.addEventListener("DOMContentLoaded", function () {
+    const data = window.dashboardData;
 
-    data: {
-        labels: dashboardData.feename,
+    if (!data || typeof Chart === "undefined") {
+        console.error("Dashboard data or Chart.js is missing.");
+        return;
+    }
 
-        datasets: [{
-            label: 'Course Fees',
-            data: dashboardData.feevalue,
+    // Common colors and chart styling
+    const purple = "#7028b8";
+    const purpleLight = "rgba(112, 40, 184, 0.12)";
+    const orange = "#ff795e";
+    const gridColor = "#eeeaf3";
+    const textColor = "#9995a5";
 
-            borderColor: '#1685ee',
-            backgroundColor: 'rgb(79, 76, 167)',
-            pointBackgroundColor: '#de1414',
-            pointBorderColor: '#e2e5e7',
-            pointRadius: 5,
-            pointHoverRadius: 8,
-            borderWidth: 3,
-            tension: 0.3,
-            fill: true
-        }]
-    },
+    Chart.defaults.font.family = "Arial, sans-serif";
+    Chart.defaults.font.size = 11;
+    Chart.defaults.color = textColor;
 
-    options: {
+    // Shared chart options
+    const commonOptions = {
         responsive: true,
         maintainAspectRatio: false,
-
+        interaction: {
+            intersect: false,
+            mode: "index"
+        },
         plugins: {
             legend: {
                 display: true,
-                position: 'top'
+                position: "bottom",
+                labels: {
+                    usePointStyle: true,
+                    pointStyle: "circle",
+                    boxWidth: 7,
+                    boxHeight: 7,
+                    padding: 14,
+                    color: "#8c8798"
+                }
             },
-
             tooltip: {
-                callbacks: {
-                    label: function(context) {
-                        return 'Course Fees: ' +
-                            Number(context.parsed.y).toLocaleString();
-                    }
-                }
-            },
-
-            datalabels: {
-                display: true,
-                color: '#e7dfdf',
-                align: 'top',
-                font: {
-                    weight: 'bold',
-                    size: 11
-                },
-                formatter: function(value) {
-                    return Number(value).toLocaleString();
-                }
+                backgroundColor: "#29213b",
+                titleColor: "#ffffff",
+                bodyColor: "#ffffff",
+                padding: 12,
+                cornerRadius: 8,
+                displayColors: true
             }
         },
-
         scales: {
-            y: {
-                beginAtZero: true,
-
-                title: {
-                    display: true,
-                    text: 'Course Cost',
-                    color: '#ffffff'
-                }
-            },
-
-                        x: {
-                ticks: {
-                    color: '#ffffff'
-                },
-                title: {
-                    display: true,
-                    text: 'Course Name',
-                    color: '#ffffff'
-                }
-            }
-        }
-    }
-});
-
-new Chart(document.getElementById('enquiryChart'), {
-    type: 'bar',
-
-    data: {
-        labels: dashboardData.course_name,
-        datasets: [{
-            label: 'Number of Enquiries',
-            data: dashboardData.enquirycount,
-
-            backgroundColor: [
-                '#FF6384',
-                '#36A3EB',
-                '#de131d',
-                '#d1db09',
-                '#9966FF',
-                '#0d0abc',
-                '#35b55b',
-                '#bf3de7'
-            ],
-
-            borderRadius: 5
-        }]
-    },
-
-    options: {
-        responsive: true,
-        maintainAspectRatio: false,
-
-        plugins: {
-            legend: {
-                display: false
-            },
-
-            datalabels: {
-                display: true,
-                color: '#fffdfd',
-                anchor: 'end',
-                align: 'top',
-                font: {
-                    weight: 'bold',
-                    size: 12
-                }
-            }
-        },
-
-        scales: {
-            y: {
-                beginAtZero: true,
-                ticks: {
-                    precision: 0
-                },
-                title: {
-                    display: true,
-                    text: 'Number of Enquiries',
-                    color: '#ffffff'
-                }
-            },
-
-                    x: {
-                ticks: {
-                    color: '#ffffff'
-                },
-                title: {
-                    display: true,
-                    text: 'Courses',
-                    color: '#ffffff'
-                }
-            }
-        }
-    }
-});
-
-//Enquiries per day//
-const dates = dashboardData.enquiryDates || [];
-const totals = dashboardData.enquiryTotals || [];
-
-const timeCanvas = document.getElementById("timeChart");
-
-if (timeCanvas) {
-    const monthLabels = [
-        "January", "February", "March", "April",
-        "May", "June", "July", "August",
-        "September", "October", "November", "December"
-    ];
-
-    
-    const monthlyTotals = Array(12).fill(0);
-
-    dates.forEach((date, index) => {
-        let monthIndex = -1;
-
-        if (/^\d{4}-\d{2}/.test(date)) {
-            monthIndex = parseInt(date.substring(5, 7), 10) - 1;
-        } else {
-            monthIndex = monthLabels.findIndex(
-                month => month.toLowerCase() === date.toLowerCase()
-            );
-        }
-
-        if (monthIndex >= 0 && monthIndex < 12) {
-            monthlyTotals[monthIndex] += Number(totals[index] || 0);
-        }
-    });
-
-    new Chart(timeCanvas, {
-        type: "bar",
-
-        data: {
-            labels: monthLabels,
-
-            datasets: [{
-                label: "Enquiries",
-                data: monthlyTotals,
-                backgroundColor: "#0b588c",
-                borderColor: "#36a2eb",
-                borderWidth: 1,
-                borderRadius: 5
-            }]
-        },
-
-        options: {
-            indexAxis: "x",
-            responsive: true,
-            maintainAspectRatio: false,
-
-            layout: {
-                padding: {
-                    top: 15,
-                    right: 15,
-                    bottom: 5,
-                    left: 5
-                }
-            },
-
-            plugins: {
-                legend: {
+            x: {
+                grid: {
                     display: false
                 },
-
-                tooltip: {
-                    callbacks: {
-                        label: context =>
-                            "Enquiries: " + context.parsed.y
-                    }
+                border: {
+                    display: false
                 },
-                    datalabels: {
-                display: true,
-                color: "#ffffff",
-                anchor: "end",
-                align: "top",
-                offset: 4,
-                font: {
-                    weight: "bold",
-                    size: 12
-                },
-                formatter: function(value) {
-                    return value;
+                ticks: {
+                    color: textColor,
+                    maxRotation: 35,
+                    minRotation: 0
                 }
-            }
-               
             },
-
-            scales: {
-                x: {
-                    ticks: {
-                        color: "#ffffff",
-                        autoSkip: false,
-                        maxRotation: 0,
-                        minRotation: 0
-                    },
-
-                    title: {
-                        display: true,
-                        text: "Months",
-                        color: "#ffffff"
-                    },
-
-                    grid: {
-                        display: false
-                    }
+            y: {
+                beginAtZero: true,
+                grid: {
+                    color: gridColor,
+                    drawTicks: false
                 },
-
-                y: {
-                    beginAtZero: true,
-                    grace: "10%",
-
-                    ticks: {
-                        precision: 0,
-                        color: "#ffffff"
-                    },
-
-                    title: {
-                        display: true,
-                        text: "Number of Enquiries",
-                        color: "#ffffff"
-                    }
+                border: {
+                    display: false,
+                    dash: [4, 4]
+                },
+                ticks: {
+                    padding: 8,
+                    precision: 0
                 }
             }
         }
-    });
-}
+    };
 
+    // ==============================
+    // 1. FEES PER COURSE
+    // Smooth purple line with a soft fill
+    // ==============================
+    const feeCanvas = document.getElementById("feeChart");
+
+    if (feeCanvas) {
+        const ctx = feeCanvas.getContext("2d");
+        const gradient = ctx.createLinearGradient(0, 0, 0, 260);
+
+        gradient.addColorStop(0, "rgba(112, 40, 184, 0.24)");
+        gradient.addColorStop(1, "rgba(112, 40, 184, 0.00)");
+
+        new Chart(feeCanvas, {
+            type: "line",
+            data: {
+                labels: data.feename,
+                datasets: [{
+                    label: "Course fees",
+                    data: data.feevalue,
+                    borderColor: purple,
+                    backgroundColor: gradient,
+                    fill: true,
+                    tension: 0.42,
+                    borderWidth: 3,
+                    pointRadius: 0,
+                    pointHoverRadius: 5,
+                    pointHoverBackgroundColor: orange,
+                    pointHoverBorderColor: "#ffffff",
+                    pointHoverBorderWidth: 2
+                }]
+            },
+            options: {
+                ...commonOptions,
+                scales: {
+                    ...commonOptions.scales,
+                    x: {
+                        ...commonOptions.scales.x,
+                        ticks: {
+                            ...commonOptions.scales.x.ticks,
+                            autoSkip: true,
+                            maxTicksLimit: 8
+                        }
+                    },
+                    y: {
+                        ...commonOptions.scales.y,
+                        beginAtZero: true,
+                        ticks: {
+                            ...commonOptions.scales.y.ticks,
+                            callback: value =>
+                                Number(value).toLocaleString()
+                        }
+                    }
+                }
+            }
+        });
+    }
+
+    // ==============================
+    // 2. ENQUIRIES PER COURSE
+    // Smooth orange line with purple points
+    // ==============================
+    const enquiryCanvas = document.getElementById("enquiryChart");
+
+    if (enquiryCanvas) {
+        new Chart(enquiryCanvas, {
+            type: "line",
+            data: {
+                labels: data.course_name,
+                datasets: [{
+                    label: "Enquiries",
+                    data: data.enquirycount,
+                    borderColor: orange,
+                    backgroundColor: "rgba(255, 121, 94, 0.12)",
+                    fill: true,
+                    tension: 0.4,
+                    borderWidth: 3,
+                    pointRadius: 3,
+                    pointBackgroundColor: purple,
+                    pointBorderColor: "#ffffff",
+                    pointBorderWidth: 1.5,
+                    pointHoverRadius: 6
+                }]
+            },
+            options: {
+                ...commonOptions,
+                scales: {
+                    ...commonOptions.scales,
+                    x: {
+                        ...commonOptions.scales.x,
+                        ticks: {
+                            ...commonOptions.scales.x.ticks,
+                            autoSkip: true,
+                            maxTicksLimit: 8
+                        }
+                    }
+                }
+            }
+        });
+    }
+
+    // ==============================
+    // 3. ENQUIRIES OVER TIME
+    // Rounded purple and orange bars
+    // ==============================
+    const timeCanvas = document.getElementById("timeChart");
+
+    if (timeCanvas) {
+        new Chart(timeCanvas, {
+            type: "bar",
+            data: {
+                labels: data.enquiryDates,
+                datasets: [{
+                    label: "Months",
+                    data: data.enquiryTotals,
+
+                    // Alternate colors like the reference design
+                    backgroundColor: data.enquiryTotals.map(
+                        (_, index) =>
+                            index % 2 === 0 ? purple : orange
+                    ),
+
+                    hoverBackgroundColor: data.enquiryTotals.map(
+                        (_, index) =>
+                            index % 2 === 0 ? "#8d50cf" : "#ce7312"
+                    ),
+
+                    borderRadius: {
+                        topLeft: 5,
+                        topRight: 5,
+                        bottomLeft: 0,
+                        bottomRight: 0
+                    },
+                    borderSkipped: "bottom",
+                    maxBarThickness: 24,
+                    categoryPercentage: 0.78,
+                    barPercentage: 0.85
+                }]
+            },
+            options: {
+                ...commonOptions,
+                scales: {
+                    ...commonOptions.scales,
+                    x: {
+                        ...commonOptions.scales.x,
+                        ticks: {
+                            ...commonOptions.scales.x.ticks,
+                            maxRotation: 0
+                        }
+                    }
+                }
+            }
+        });
+    }
+});
 
 
 //search x button//
@@ -442,7 +394,7 @@ function login(event) {
             message.style.color = "green";
 
             setTimeout(function () {
-                window.location.href = "stat.php";
+                window.location.href = "stats.php";
             }, 3300);
 
         } else {

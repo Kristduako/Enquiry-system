@@ -1,6 +1,6 @@
 .body{
+    margin-left:550px;
     font-family: monospace;
-    margin-left:450px;
     margin-top:0px;
     background:linear-gradient(to right, rgb(0, 0, 0),rgb(26, 63, 75));
 }
@@ -13,7 +13,7 @@
     box-shadow: 0 10px 20px 30px rgba(0, 0, 0, 0.15);
     text-align: center;
     backdrop-filter: blur(20px);
-    animation: breathing 8s ease-in-out infinite;
+    animation: breathing 3s ease-in-out infinite;
     transform-origin: center;
 
 }
@@ -23,7 +23,7 @@
     }
 
     50% {
-        transform: scale(1.09);
+        transform: scale(1.02);
     }
 
     100% {
