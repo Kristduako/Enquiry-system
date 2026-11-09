@@ -96,17 +96,55 @@ if ($search !== '') {
 	<link rel="stylesheet" type="text/css" href="Course.css">
 </head>
 <body>
-	<h1 class="h1">Enquiries course Table🖥<br></h1>
-	<div>
-			<div class="sidenav">
-				<img src="gi kace.jpeg" class="img">
-				<a href="stat.php" >Dashboard🖥</a>
-				<a href="index.php" >Enquiries</a>
-				<a href="course.php" >Courses</a>
-				
-			</div>
+	<h1 class="h1">Enquiries course view🖥<br></h1>
+	<div class="sidenav">
+    <div class="sidebar-logo">
+        <img src="/Enquiry-system/gi%20kace.jpeg"
+             class="img"
+             alt="Dashboard logo">
 
-			<a href="Login.php" class="log">Logout</a>
+        <div class="sidebar-brand">
+            <h2>GI-KACE</h2>
+            <p>Enquiry System</p>
+        </div>
+    </div>
+
+    <div class="sidebar-menu">
+        <p class="sidebar-label">MAIN MENU</p>
+
+        <a href="/Enquiry-system/stats">
+            <span class="sidebar-icon">▦</span>
+            <span>Dashboard</span>
+        </a>
+
+        <a href="/Enquiry-system/index">
+            <span class="sidebar-icon">☷</span>
+            <span>Enquiries</span>
+        </a>
+
+        <a href="/Enquiry-system/course" class="active">
+            <span class="sidebar-icon">▤</span>
+            <span>Courses</span>
+        </a>
+    </div>
+
+    <div class="sidebar-footer">
+        <div class="sidebar-profile">
+            <div class="profile-avatar">A</div>
+
+            <div class="profile-info">
+                <strong>Administrator</strong>
+                <span>System Manager</span>
+            </div>
+        </div>
+
+        <a href="Login.php" class="log">
+            <span class="sidebar-icon">↪</span>
+            <span>Logout</span>
+        </a>
+    </div>
+</div>
+ref="Login.php" class="log">Logout</a>
 		</div>
 	 <nav class="nav1">
         <h1  class="h2">Course Table</h1>
@@ -114,7 +152,9 @@ if ($search !== '') {
                 <th class="table1">Course Name</th>
                 <th class="table1">Duration</th>
                 <th class="table1">Cost</th>
-				<th class="table1">
+				<th class="table1">Edit</th>
+                <th class="table1">Delete</th>
+					
                     
                 </th>
                 <th class="table1">

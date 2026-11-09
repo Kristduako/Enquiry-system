@@ -148,16 +148,52 @@ $enquiryTotals = array_values($monthlyTotals);
 
     <h1 class="h1">Dashboard</h1>
 
-    <div>
-        <div class="sidenav">
-            <img src="gi kace.jpeg" class="img">
-            <a href="stat.php">Dashboard🖥</a>
-            <a href="index.php">Enquiries</a>
-            <a href="course.php">Courses</a>
+    <div class="sidenav">
+    <div class="sidebar-logo">
+        <img src="/Enquiry-system/gi%20kace.jpeg"
+             class="img"
+             alt="Dashboard logo">
+
+        <div class="sidebar-brand">
+            <h2>GI-KACE</h2>
+            <p>Enquiry System</p>
+        </div>
+    </div>
+
+    <div class="sidebar-menu">
+        <p class="sidebar-label">MAIN MENU</p>
+
+        <a href="/Enquiry-system/stats" class="active">
+            <span class="sidebar-icon">▦</span>
+            <span>Dashboard</span>
+        </a>
+
+        <a href="/Enquiry-system/index">
+            <span class="sidebar-icon">☷</span>
+            <span>Enquiries</span>
+        </a>
+
+        <a href="/Enquiry-system/course">
+            <span class="sidebar-icon">▤</span>
+            <span>Courses</span>
+        </a>
+    </div>
+
+    <div class="sidebar-footer">
+        <div class="sidebar-profile">
+            <div class="profile-avatar">A</div>
+            <div class="profile-info">
+                <strong>Administrator</strong>
+                <span>System Manager</span>
+            </div>
         </div>
 
-        <a href="Login.php" class="log">Logout</a>
+        <a href="Login.php" class="log">
+            <span class="sidebar-icon">↪</span>
+            <span>Logout</span>
+        </a>
     </div>
+</div>
 
     <div class="dashboard">
         <div class="stats">
@@ -182,7 +218,7 @@ $enquiryTotals = array_values($monthlyTotals);
                      width="48px" fill="#010101">
                     <path d="M180-120q-24.75 0-42.37-17.63Q120-155.25 120-180v-600q0-24.75 17.63-42.38Q155.25-840 180-840h205q5-35 32-57.5t63-22.5q36 0 63 22.5t32 57.5h205q24.75 0 42.38 17.62Q840-804.75 840-780v600q0 24.75-17.62 42.37Q804.75-120 780-120H180Zm0-60h600v-600H180v600Zm100-100h273v-60H280v60Zm0-170h400v-60H280v60Zm0-170h400v-60H280v60Z"/>
                 </svg>
-                <a href="course.php" class="link"><svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e3e3e3"><path d="m256-240-56-56 384-384H240v-80h480v480h-80v-344L256-240Z"/></svg></a>
+                <a href="index.php" class="link"><svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e3e3e3"><path d="m256-240-56-56 384-384H240v-80h480v480h-80v-344L256-240Z"/></svg></a>
                 <h3>TOTAL ENQUIRIES</h3>
                 <h2><?= $totalenquiries ?></h2>
             </div>

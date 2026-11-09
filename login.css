@@ -1,57 +1,150 @@
-.body{
-    margin-left:550px;
-    font-family: monospace;
-    margin-top:0px;
-    background:linear-gradient(to right, rgb(0, 0, 0),rgb(26, 63, 75));
-}
-.div{
-    width: 350px;
-    margin: 100px;
-    padding: 30px;
-    background-color: rgb(221, 232, 235);
-    border-radius:10px;
-    box-shadow: 0 10px 20px 30px rgba(0, 0, 0, 0.15);
-    text-align: center;
-    backdrop-filter: blur(20px);
-    animation: breathing 3s ease-in-out infinite;
-    transform-origin: center;
 
+* {
+    box-sizing: border-box;
 }
+
+.body {
+    margin: 0;
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-family: 'Segoe UI', sans-serif;
+
+    background: linear-gradient(
+        135deg,
+        #081860,
+        #dfdfdf,
+        #093dad
+    );
+
+    background-size: 200% 200%;
+    animation: gradientMove 8s ease infinite;
+}
+
+.div {
+    width: 400px;
+    padding: 40px;
+    background: rgba(255,255,255,0.96);
+    border-radius: 22px;
+
+    box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+
+    text-align: left;
+}
+
+.icon {
+    width: 65px;
+    height: 65px;
+    background: #dbeafe;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 30px;
+    margin: 0 auto 20px;
+}
+
+h1 {
+    text-align: center;
+    color: #0f172a;
+    margin-bottom: 8px;
+    font-size: 30px;
+}
+
+.subtitle {
+    text-align: center;
+    color: #64748b;
+    margin-bottom: 30px;
+}
+
+label {
+    display: block;
+    color: #334155;
+    font-size: 14px;
+    font-weight: 600;
+    margin-top: 15px;
+}
+
+.input {
+    width: 100%;
+    padding: 14px;
+    border: 1px solid #cbd5e1;
+    border-radius: 10px;
+    font-size: 14px;
+    margin-top: 8px;
+    outline: none;
+    transition: 0.3s;
+    background: #f8fafc;
+}
+
+.input:focus {
+    border-color: #2563eb;
+    box-shadow: 0 0 0 4px rgba(37,99,235,0.12);
+    background: white;
+}
+
+.btn {
+    width: 100%;
+    padding: 15px;
+    margin-top: 25px;
+
+    background: linear-gradient(
+        135deg,
+        #2563eb,
+        #1d4ed8
+    );
+
+    color: white;
+    border: none;
+    border-radius: 10px;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+.btn:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 20px rgba(37,99,235,0.35);
+}
+
+#message {
+    text-align: center;
+    font-size: 14px;
+    font-weight: bold;
+}
+
+.footer {
+    text-align: center;
+    color: #94a3b8;
+    font-size: 12px;
+    margin-top: 25px;
+}
+
 @keyframes breathing {
-    0% {
+    0%, 100% {
         transform: scale(1);
     }
 
     50% {
         transform: scale(1.02);
     }
+}
 
-    100% {
-        transform: scale(1);
+@keyframes gradientMove {
+    0%, 100% {
+        background-position: 0% 50%;
+    }
+
+    50% {
+        background-position: 100% 50%;
     }
 }
-.input{
-    width: 90%;
-    padding:12px;
-    border:2px solid black;
-    border-radius:50px;
-    font-weight: bolder;
-    margin: 10px 0;
-}
-.btn{
-    background: #2563eb;
-    color: white;
-    border: none;
-    padding: 9px 15px;
-    border-radius: 7px;
-    font-size: 13px;
-    font-weight: 600;
-    cursor: pointer;
-    transition: all 0.3s ease;
-   
-}
-.btn:hover {
-    background: #1d4ed8;
-    transform: translateY(-4px);
-    box-shadow: 0 5px 12px rgba(37, 99, 235, 0.3);
+
+@media (max-width: 480px) {
+    .div {
+        width: 90%;
+        padding: 25px;
+    }
 }

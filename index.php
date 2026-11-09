@@ -1,6 +1,8 @@
 <?php
 require_once 'db_conn.php';
 
+
+
 mysqli_report(MYSQLI_REPORT_ERROR | MYSQLI_REPORT_STRICT);
 
 $error = '';
@@ -198,15 +200,56 @@ if (isset($_GET['success'])) {
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-
     <div class="sidenav">
-        <img src="gi kace.jpeg" class="img" alt="Dashboard logo">
-        <a href="stat.php">Dashboard 🖥</a>
-        <a href="index.php" class="active">Enquiries</a>
-        <a href="course.php">Courses</a>
+
+    <div class="sidebar-logo">
+        <img src="/Enquiry-system/gi%20kace.jpeg"
+             class="img"
+             alt="Dashboard logo">
+
+        <div class="sidebar-brand">
+            <h2>GI-KACE</h2>
+            <p>Enquiry System</p>
+        </div>
     </div>
 
-    <a href="Login.php" class="log">Logout</a>
+    <div class="sidebar-menu">
+        <p class="sidebar-label">MAIN MENU</p>
+
+        <a href="/Enquiry-system/stats">
+            <span class="sidebar-icon">▦</span>
+            <span>Dashboard</span>
+        </a>
+
+        <a href="/Enquiry-system/index" class="active">
+            <span class="sidebar-icon">☷</span>
+            <span>Enquiries</span>
+        </a>
+
+        <a href="/Enquiry-system/course">
+            <span class="sidebar-icon">▤</span>
+            <span>Courses</span>
+        </a>
+    </div>
+
+    <div class="sidebar-footer">
+
+        <div class="sidebar-profile">
+            <div class="profile-avatar">A</div>
+
+            <div class="profile-info">
+                <strong>Administrator</strong>
+                <span>System Manager</span>
+            </div>
+        </div>
+
+        <a href="Login.php" class="log">
+            <span class="sidebar-icon">↪</span>
+            <span>Logout</span>
+        </a>
+
+    </div>
+</div>
 
     <nav>
         <h1 class="new1">Enquiries System View 🖥</h1>
@@ -270,7 +313,7 @@ if (isset($_GET['success'])) {
                             <?= e($row['name']) ?>
                         </td>
 
-                        <td class="table2" id="course_nam-<?= $id ?>">
+                        <td class="table2" id="course-<?= $id ?>">
                             <?= e($row['course_name']) ?>
                         </td>
 

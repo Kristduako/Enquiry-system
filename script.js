@@ -1,13 +1,14 @@
-//======EDIT=======//
+// EDIT ENQUIRY
 
 function editRecords(id) {
-    let name = document.getElementById("name-"+ id).innerText;
-    let course = document.getElementById("course-"+ id).innerText;
-    let date = document.getElementById("date-"+ id).innerText;
-    let address = document.getElementById("address-"+ id).innerText;
-    let contact = document.getElementById("contact-"+ id).innerText;
 
+    const name = document.getElementById("name-" + id).innerText.trim();
+    const course = document.getElementById("course-" + id).innerText.trim();
+    const date = document.getElementById("date-" + id).innerText.trim();
+    const address = document.getElementById("address-" + id).innerText.trim();
+    const contact = document.getElementById("contact-" + id).innerText.trim();
 
+    // Load existing details into the form
 
     document.getElementById("name").value = name;
     document.getElementById("course").value = course;
@@ -15,12 +16,20 @@ function editRecords(id) {
     document.getElementById("address").value = address;
     document.getElementById("contact").value = contact;
 
+    // Store enquiry ID
+
     document.getElementById("edit_enquiry_id").value = id;
-    let submitBtn = document.getElementById("submitBtn");
+
+    // Change submit button to update
+
+    const submitBtn = document.getElementById("submitBtn");
+
     submitBtn.name = "update_btn";
-    submitBtn.innerText = "update";
-    document.getElementById("enquiryModal").style.display="block";
-     
+    submitBtn.innerText = "Update";
+
+    // Display modal
+
+    document.getElementById("enquiryModal").style.display = "flex";
 }
 
 //==========DELETE=========//
@@ -63,22 +72,22 @@ function loadEditData(){
 
 
 // + new Enquiry//
-function openEnquiryModal(){
-    document.getElementById("name").value = "";
-    document.getElementById("course").value = "";
-    document.getElementById("date").value = "";
-    document.getElementById("address").value = "";
-    document.getElementById("contact").value = "";
+function openEnquiryModal() {
+
+    document.getElementById("enquiryForm").reset();
 
     document.getElementById("edit_enquiry_id").value = "";
-    let submitBtn = document.getElementById("submitBtn");
+
+    const submitBtn = document.getElementById("submitBtn");
+
     submitBtn.name = "save";
     submitBtn.innerText = "Save";
-    document.getElementById("enquiryModal").style.display ="block";
 
+    document.getElementById("enquiryModal").style.display = "flex";
 }
-function closeEnquiryModal(){
-    document.getElementById("enquiryModal").style.display="none";
+function closeEnquiryModal() {
+
+    document.getElementById("enquiryModal").style.display = "none";
 
 }
 
@@ -394,7 +403,7 @@ function login(event) {
             message.style.color = "green";
 
             setTimeout(function () {
-                window.location.href = "stats.php";
+                window.location.href = "stats";
             }, 3300);
 
         } else {
